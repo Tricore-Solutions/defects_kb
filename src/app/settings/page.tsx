@@ -13,7 +13,7 @@ export default function SettingsPage() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-purple-700">Settings</h1>
           <p className="text-gray-600 mt-2">
-            Configure the Defect Knowledge Base system
+            Configure the Defects Management system
           </p>
         </div>
 

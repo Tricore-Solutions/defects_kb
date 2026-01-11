@@ -1,6 +1,6 @@
 # Process Flow Documentation
 
-## Defect Knowledge Base System
+## Defects Management System
 
 ## Version: 1.0
 

@@ -142,7 +142,7 @@ export default function DesignGuidePage() {
           <h1 className="text-3xl font-bold text-purple-700">Design Guide</h1>
           <p className="text-gray-600 mt-2">
             UI components, colors, and design patterns used in the Defect
-            Knowledge Base system
+            Management system
           </p>
         </div>
 

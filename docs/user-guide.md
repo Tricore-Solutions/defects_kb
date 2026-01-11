@@ -1,6 +1,6 @@
 # User Guide
 
-## Defect Knowledge Base System
+## Defects Management System
 
 ## Version: 1.0
 
@@ -8,7 +8,7 @@
 
 ## 1. Introduction
 
-Welcome to the Defect Knowledge Base System! This guide will help you understand how to use the system effectively to search for defect information, document new failure modes, and access corrective actions.
+Welcome to the Defects Management System! This guide will help you understand how to use the system effectively to search for defect information, document new failure modes, and access corrective actions.
 
 ---
 
@@ -27,7 +27,7 @@ The navigation bar at the top provides quick access to all main sections:
 | Menu Item | Description |
 |-----------|-------------|
 | Dashboard | Home page with statistics and quick actions |
-| Defect Knowledge Base | Browse and search all defects |
+| Defects Management | Browse and search all defects |
 | Add New | Create a new defect record |
 | Settings | System configuration (admin only) |
 
@@ -64,7 +64,7 @@ Visual representation of defects by category.
 
 ### 4.1 Using the Search Bar
 
-1. Click on "Defect Knowledge Base" in the navigation
+1. Click on "Defects Management" in the navigation
 2. Enter your search term in the search box
 3. The system searches across:
    - Defect name
@@ -335,4 +335,4 @@ For technical support or questions:
 
 For system issues:
 - Contact IT Support
-- Reference: Defect Knowledge Base System
+- Reference: Defects Management System

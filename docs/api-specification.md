@@ -1,6 +1,6 @@
 # API Specification
 
-## Defect Knowledge Base System
+## Defects Management System
 
 ## Version: 1.0
 
@@ -8,7 +8,7 @@
 
 ## 1. Overview
 
-This document defines the REST API endpoints for the Defect Knowledge Base System. The API follows RESTful conventions and uses JSON for request/response bodies.
+This document defines the REST API endpoints for the Defects Management System. The API follows RESTful conventions and uses JSON for request/response bodies.
 
 **Base URL**: `/api`
 

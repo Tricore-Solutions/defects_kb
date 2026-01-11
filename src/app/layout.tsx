@@ -5,7 +5,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Defect Knowledge Base",
+  title: "Defects Management",
   description:
     "Manufacturing reference system for defect identification, investigation results, and corrective actions",
 };

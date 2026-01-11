@@ -1,7 +1,7 @@
 import { DefectKnowledge, DefectCategory, SeverityLevel } from "@/types/defect";
 
 /**
- * Mock data for the Defect Knowledge Base prototype
+ * Mock data for the Defects Management prototype
  * This data simulates what would come from a database
  */
 export const mockDefects: DefectKnowledge[] = [

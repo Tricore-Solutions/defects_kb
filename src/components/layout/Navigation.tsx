@@ -53,7 +53,7 @@ export default function Navigation() {
             <Link href="/" className="flex items-center space-x-2 shrink-0">
               <Database className="h-6 w-6 sm:h-8 sm:w-8 text-purple-600" />
               <span className="text-lg sm:text-xl font-bold text-purple-700 hidden xs:inline sm:inline">
-                Defect Knowledge Base
+                Defects Management
               </span>
             </Link>
 

@@ -1,8 +1,8 @@
-# Defect Knowledge Base - Documentation
+# Defects Management - Documentation
 
 ## Overview
 
-This folder contains all documentation for the Defect Knowledge Base System.
+This folder contains all documentation for the Defects Management System.
 
 ---
 

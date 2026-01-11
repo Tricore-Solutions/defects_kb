@@ -1,7 +1,7 @@
 /**
- * Defect Knowledge Base Types
+ * Defects Management Types
  *
- * This module defines the data structures for the Defect Knowledge Base system.
+ * This module defines the data structures for the Defects Management system.
  * The system allows manufacturing teams to:
  * 1. Search and identify types of defects
  * 2. View investigation results

@@ -87,7 +87,7 @@ export default function DefectsListPage() {
     <DashboardLayout>
       <div className="py-6">
         <PageHeader
-          title="Defect Knowledge Base"
+          title="Defects Management"
           description="Search and browse documented failure modes, investigation results, and corrective actions"
           searchPlaceholder="Search by name, code, description, root cause..."
           searchValue={searchQuery}

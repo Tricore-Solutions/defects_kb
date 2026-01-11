@@ -1,6 +1,6 @@
 # Design Requirement Document (DRD)
 
-## Defect Knowledge Base System
+## Defects Management System
 
 ## Version: 1.0
 
@@ -8,7 +8,7 @@
 
 ## 1. Overview
 
-This document outlines the design requirements and specifications for the Defect Knowledge Base System. It serves as a guide for developers and designers to ensure consistent implementation.
+This document outlines the design requirements and specifications for the Defects Management System. It serves as a guide for developers and designers to ensure consistent implementation.
 
 ---
 

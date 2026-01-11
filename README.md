@@ -1,10 +1,10 @@
-# Defect Knowledge Base System
+# Defects Management System
 
 A web-based application for managing manufacturing defect information, investigation results, and corrective actions.
 
 ## Overview
 
-The Defect Knowledge Base System provides manufacturing teams with:
+The Defects Management System provides manufacturing teams with:
 - 🔍 **Searchable defect database** - Quick access to documented failure modes
 - 📋 **Investigation results** - Root cause analysis and failure analysis
 - 🔧 **Corrective actions** - Step-by-step guidance for defect resolution

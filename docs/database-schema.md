@@ -1,6 +1,6 @@
 # Database Schema Documentation
 
-## Defect Knowledge Base System
+## Defects Management System
 
 ## Version: 1.0
 
@@ -8,7 +8,7 @@
 
 ## 1. Overview
 
-This document describes the database schema for the Defect Knowledge Base System. The schema is designed to support efficient storage and retrieval of defect information, images, and audit trails.
+This document describes the database schema for the Defects Management System. The schema is designed to support efficient storage and retrieval of defect information, images, and audit trails.
 
 ---
 

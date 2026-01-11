@@ -1,6 +1,6 @@
 # Product Requirement Document (PRD)
 
-## Product Name: Defect Knowledge Base System
+## Product Name: Defects Management System
 
 ## Version: 1.0
 
@@ -8,7 +8,7 @@
 
 ## Introduction
 
-The Defect Knowledge Base System is a web-based application designed to serve as a centralized repository for manufacturing defect information, investigation results, and corrective actions. It provides manufacturing teams with quick access to documented failure modes, enabling faster defect identification and resolution on the production floor.
+The Defects Management System is a web-based application designed to serve as a centralized repository for manufacturing defect information, investigation results, and corrective actions. It provides manufacturing teams with quick access to documented failure modes, enabling faster defect identification and resolution on the production floor.
 
 The system is designed to complement existing quality management systems (like P-Chart System) by providing detailed reference information that goes beyond basic defect tracking.
 
