@@ -9,7 +9,7 @@
  */
 
 export interface DefectKnowledge {
-  id: number;
+  id: string;
   code: string; // Unique defect code (e.g., "DK-001")
   name: string; // Defect name/title (Failure Mode)
   category: DefectCategory;
@@ -45,8 +45,8 @@ export interface DefectKnowledge {
 }
 
 export interface DefectImage {
-  id: number;
-  defectId: number;
+  id: string;
+  defectId: string;
   url: string;
   caption?: string;
   imageType: "defect" | "root_cause" | "corrective_action" | "reference";
@@ -55,23 +55,25 @@ export interface DefectImage {
 }
 
 export type DefectCategory =
-  | "VISUAL_DEFECT"
-  | "DIMENSIONAL_DEFECT"
-  | "FUNCTIONAL_DEFECT"
-  | "MATERIAL_DEFECT"
-  | "PROCESS_DEFECT"
-  | "ASSEMBLY_DEFECT"
-  | "PACKAGING_DEFECT"
+  | "SOLDERING"
+  | "VISUAL_INSPECTION"
+  | "CABLE_PREPARATION"
+  | "CRIMPING"
+  | "ASSEMBLY"
+  | "TAPING"
+  | "ELECTRICAL"
+  | "LABELING"
   | "OTHER";
 
 export const DEFECT_CATEGORIES: Record<DefectCategory, string> = {
-  VISUAL_DEFECT: "Visual Defect",
-  DIMENSIONAL_DEFECT: "Dimensional Defect",
-  FUNCTIONAL_DEFECT: "Functional Defect",
-  MATERIAL_DEFECT: "Material Defect",
-  PROCESS_DEFECT: "Process Defect",
-  ASSEMBLY_DEFECT: "Assembly Defect",
-  PACKAGING_DEFECT: "Packaging Defect",
+  SOLDERING: "Soldering",
+  VISUAL_INSPECTION: "Visual Inspection",
+  CABLE_PREPARATION: "Cable Preparation",
+  CRIMPING: "Crimping & Terminal",
+  ASSEMBLY: "Assembly",
+  TAPING: "Taping & Packaging",
+  ELECTRICAL: "Electrical Test",
+  LABELING: "Labeling",
   OTHER: "Other",
 };
 

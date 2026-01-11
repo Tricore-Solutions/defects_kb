@@ -34,7 +34,7 @@ import { DEFECT_CATEGORIES, SEVERITY_LEVELS } from "@/types/defect";
 
 export default function DefectDetailPage() {
   const params = useParams();
-  const defectId = Number(params.id);
+  const defectId = params.id as string;
 
   console.log("DefectDetailPage: Loading defect with ID:", defectId);
 
@@ -50,7 +50,7 @@ export default function DefectDetailPage() {
               Defect Not Found
             </h2>
             <p className="text-gray-500 mb-4">
-              The defect with ID {defectId} could not be found.
+              The defect with ID &quot;{defectId}&quot; could not be found.
             </p>
             <Link href="/defects">
               <Button>
