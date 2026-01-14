@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { FileText, Palette } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -8,13 +9,22 @@ export default function Footer() {
           <p>© 2026 Defects Management System</p>
           <div className="flex items-center gap-4">
             <Link
-              href="/design-guide"
-              className="hover:text-purple-600 transition-colors"
+              href="/docs"
+              className="hover:text-purple-600 transition-colors flex items-center gap-1"
             >
+              <FileText className="h-3.5 w-3.5" />
+              Docs
+            </Link>
+            <span className="text-gray-300">|</span>
+            <Link
+              href="/design-guide"
+              className="hover:text-purple-600 transition-colors flex items-center gap-1"
+            >
+              <Palette className="h-3.5 w-3.5" />
               Design Guide
             </Link>
-            <span>|</span>
-            <p>Version 1.0.0 (Prototype)</p>
+            <span className="text-gray-300">|</span>
+            <p>Version 2.0.0 (Prototype)</p>
           </div>
         </div>
       </div>
