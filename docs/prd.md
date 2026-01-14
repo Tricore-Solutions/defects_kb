@@ -2,15 +2,15 @@
 
 ## Product Name: Defects Management System
 
-## Version: 1.0
+## Version: 2.0
 
 ---
 
 ## Introduction
 
-The Defects Management System is a web-based application designed to serve as a centralized repository for manufacturing defect information, investigation results, and corrective actions. It provides manufacturing teams with quick access to documented failure modes, enabling faster defect identification and resolution on the production floor.
+The Defects Management System is a web-based application designed to serve as a centralized repository for manufacturing defect information based on DMF (Defect Mode and Failure analysis) format. It provides manufacturing teams with quick access to documented failure modes, root cause analysis, and corrective actions.
 
-The system is designed to complement existing quality management systems (like P-Chart System) by providing detailed reference information that goes beyond basic defect tracking.
+The system uses a simplified data structure aligned with manufacturing DMF documentation standards, featuring 4M category analysis (Machine, Man, Method, Material).
 
 ---
 
@@ -18,11 +18,11 @@ The system is designed to complement existing quality management systems (like P
 
 Manufacturing teams face several challenges when encountering defects:
 
-1. **Knowledge Silos**: Investigation results and corrective actions are often stored in scattered documents, emails, or individual knowledge
-2. **Slow Response Time**: Operators spend time searching for information when defects occur
-3. **Inconsistent Actions**: Without standardized references, corrective actions vary between shifts and operators
-4. **Lost Institutional Knowledge**: When experienced engineers leave, their knowledge about defect resolution is lost
-5. **Repeated Investigations**: Similar defects are investigated multiple times due to lack of documentation
+1. **Knowledge Silos**: Investigation results stored in scattered Excel files
+2. **Slow Response Time**: Operators spend time searching for information
+3. **Inconsistent Actions**: Corrective actions vary between shifts
+4. **Lost Institutional Knowledge**: Knowledge lost when engineers leave
+5. **Repeated Investigations**: Similar defects investigated multiple times
 
 ---
 
@@ -30,11 +30,11 @@ Manufacturing teams face several challenges when encountering defects:
 
 A searchable, user-friendly web application that:
 
-- Provides instant access to defect information via search
-- Documents failure modes with detailed investigation results
-- Offers clear corrective and preventive actions for manufacturing reference
-- Includes visual references (images) for defect identification
-- Maintains a historical record of all documented defects
+- Provides instant access to defect information via keyword search
+- Documents failure modes with DMF-format structure
+- Offers clear corrective actions with visual references
+- Includes multiple image types (process, failure analysis, corrective action)
+- Supports 4M category classification for root cause analysis
 
 ---
 
@@ -44,220 +44,133 @@ A searchable, user-friendly web application that:
 
 1. **Production Operators**
    - Need quick reference when defects are encountered
-   - Require clear, step-by-step corrective actions
-   - Benefit from visual references for defect identification
+   - Require clear corrective actions with visual guides
 
 2. **Line Supervisors**
-   - Need to verify correct actions are being taken
-   - Require access to investigation details for decision making
-   - Monitor defect patterns and trends
+   - Verify correct actions are being taken
+   - Access root cause analysis for decision making
 
 ### Secondary Users
 
 3. **Quality Engineers**
    - Document new failure modes and investigation results
    - Update existing records with new findings
-   - Analyze defect data for continuous improvement
 
 4. **Process Engineers**
    - Reference root cause analysis for process improvements
-   - Access preventive action recommendations
-   - Link defects to specific processes and products
 
 ---
 
-## Key Features and Functional Requirements
+## Key Features
 
-### 1. Defect Search and Browse
+### 1. Dashboard Search Interface
+- Three-field search form: Item, Category, Defect
+- Direct navigation to filtered defects list
 
-**Search Functionality**
-- Full-text search across defect name, code, description, root cause, and corrective actions
-- Filter by category (Visual, Dimensional, Functional, Material, Process, Assembly, Packaging)
-- Filter by severity level (Critical, Major, Minor, Cosmetic)
-- Filter by active/inactive status
+### 2. Defect DataTable
+- Sortable columns (Failure Mode, Process, Criteria, DRI, Category)
+- Pagination with configurable items per page (5, 10, 25, 50)
+- Responsive design (table on desktop, cards on mobile)
+- Inline images below descriptions
+- Clickable images with modal viewer
 
-**Browse Functionality**
-- List view with sortable columns
-- Quick preview of key information
-- Pagination for large datasets
+### 3. Keyword Search
+- Global keyword search from navigation header
+- Search on blur or Enter key
+- URL-based search parameters
+- Visual badge showing active search term
 
-### 2. Defect Detail View
+### 4. Defect Detail View
+- Process Details section with images
+- Failure Analysis / Root Cause section with images
+- Corrective Action section with images
+- All images clickable for full-size viewing
 
-**Information Display**
-- Defect code and name (Failure Mode)
-- Category and severity classification
-- Detailed description
-- Investigation results (Failure Analysis)
-- Root cause identification
-- Corrective actions (numbered steps)
-- Preventive actions
-- Visual references (images)
-
-**Quick Reference Section**
-- Highlighted section for manufacturing floor use
-- Clear, actionable steps
-- Prominent display of immediate actions
-
-**Metadata**
-- Applicable products
-- Applicable processes
-- Related defect codes (P-Chart integration)
-- Occurrence statistics
-- Audit trail (created/updated by, dates)
-
-### 3. Defect Management
-
-**Add New Defect**
-- Form with required and optional fields
-- Category and severity selection
-- Rich text input for detailed descriptions
-- Image upload capability
-- Tag management for products/processes
-
-**Edit Existing Defect**
-- Update all fields
-- Maintain audit trail
-- Version history (future enhancement)
-
-**Defect Status Management**
-- Active/Inactive toggle
-- Archive functionality (future enhancement)
-
-### 4. Image Management
-
-**Upload Capabilities**
-- Support for common image formats (JPEG, PNG)
-- Multiple images per defect
-- Image categorization (defect example, root cause, corrective action, reference)
-
-**Display**
-- Thumbnail gallery view
-- Full-size image viewing
-- Image captions
-
-### 5. Dashboard
-
-**Statistics Overview**
-- Total defects count
-- Active defects count
-- Critical defects count
-- Category distribution
-
-**Quick Access**
-- Recently updated defects
-- Search shortcut
-- Add new defect shortcut
-
-### 6. User Interface
-
-**Design Principles**
-- Clean, professional appearance
-- Consistent with P-Chart System styling
-- Mobile-responsive design
-- Fast loading times
-
-**Accessibility**
-- Clear typography
-- Sufficient color contrast
-- Keyboard navigation support
+### 5. Defect Management
+- Add new defect with DMF-format fields
+- Edit existing defect
+- Manage images per section
 
 ---
 
-## Non-Functional Requirements
+## Data Model
 
-### Performance
-- Page load time < 2 seconds
-- Search results < 500ms
-- Support for 100+ concurrent users
+### DefectKnowledge Fields
 
-### Security
-- Role-based access control (future)
-- Secure data transmission (HTTPS)
-- Input validation and sanitization
+| Field | Type | Description |
+|-------|------|-------------|
+| id | string | Unique identifier |
+| failureMode | string | e.g., "Exposed Wire" |
+| process | string | Process name |
+| processImages | string[] | Process image URLs |
+| criteriaAcceptanceLimit | string | e.g., "AL-PH061" |
+| dri | string | Responsible person |
+| category | enum | MACHINE, MAN, METHOD, MATERIAL |
+| failureAnalysisRootCause | string | Root cause description |
+| failureAnalysisImages | string[] | Evidence images |
+| correctiveAction | string | Steps to resolve |
+| correctiveActionImages | string[] | Reference images |
+| createdAt | Date | Creation timestamp |
+| updatedAt | Date | Update timestamp |
+| createdBy | string | Creator name |
+| isActive | boolean | Active status |
 
-### Scalability
-- Support for 10,000+ defect records
-- Efficient database queries
-- Image storage optimization
+### 4M Categories
 
-### Availability
-- 99.5% uptime during production hours
-- Graceful error handling
-- Offline capability (future enhancement)
+| Category | Description |
+|----------|-------------|
+| MACHINE | Equipment or tool-related causes |
+| MAN | Human error or operator-related causes |
+| METHOD | Process or procedure-related causes |
+| MATERIAL | Raw material or component-related causes |
 
 ---
 
 ## Technical Requirements
 
 ### Platform
-- Web application (Next.js/React)
-- Modern browsers (Chrome, Firefox, Safari, Edge)
-- Responsive design for desktop and tablet
+- Next.js 15 (App Router)
+- TypeScript
+- Tailwind CSS
+- shadcn/ui components
 
-### Database
-- Relational database (MySQL/PostgreSQL)
-- Full-text search capability
-- Image/file storage
-
-### Integration
-- API for P-Chart System integration (future)
-- Export capabilities (Excel, PDF)
-- Import from existing documentation
-
----
-
-## Success Metrics
-
-1. **Adoption Rate**: 80% of production operators using the system within 3 months
-2. **Search Efficiency**: Average time to find defect information < 30 seconds
-3. **Data Quality**: 95% of defects have complete information (all required fields)
-4. **User Satisfaction**: 4.0+ rating on user surveys
-5. **Knowledge Capture**: 100+ defects documented in first 6 months
+### Current Implementation
+- Mock data (JSON file)
+- Client-side filtering and pagination
+- Static image hosting
 
 ---
 
 ## Roadmap
 
 ### Phase 1: MVP (Current)
-- Basic CRUD operations
-- Search and filter functionality
-- Dashboard with statistics
+- Dashboard search interface
+- DataTable with sorting and pagination
 - Responsive design
+- Defect detail view
+- Add/Edit forms
+- Keyword search
+- Clickable images with modal
 
 ### Phase 2: Enhancement
-- User authentication and roles
-- Image upload and management
+- User authentication
+- Image upload
 - Export functionality
-- Advanced search
 
 ### Phase 3: Integration
-- P-Chart System integration
+- Database backend
 - API development
-- Notification system
-- Mobile app
-
-### Phase 4: Advanced Features
-- AI-powered defect matching
-- Trend analysis
-- Predictive analytics
-- Multi-language support
+- P-Chart System integration
 
 ---
 
-## Appendix
-
-### Glossary
+## Glossary
 
 | Term | Definition |
 |------|------------|
-| Failure Mode | A specific way in which a product or process can fail |
-| Root Cause | The fundamental reason for a defect occurrence |
-| Corrective Action | Steps taken to eliminate the cause of a detected defect |
-| Preventive Action | Steps taken to eliminate the cause of a potential defect |
-| Severity | Classification of defect impact (Critical, Major, Minor, Cosmetic) |
-
-### Related Documents
-- Design Requirement Document (DRD)
-- Process Flow Documentation
-- Database Schema
-- API Specification
+| Failure Mode | A specific way a product or process can fail |
+| Root Cause | The fundamental reason for a defect |
+| Corrective Action | Steps to eliminate the cause of a defect |
+| DMF | Defect Mode and Failure analysis format |
+| 4M | Machine, Man, Method, Material categories |
+| DRI | Direct Responsible Individual |

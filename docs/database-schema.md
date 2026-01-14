@@ -2,428 +2,289 @@
 
 ## Defects Management System
 
-## Version: 1.0
+## Version: 2.0
 
 ---
 
 ## 1. Overview
 
-This document describes the database schema for the Defects Management System. The schema is designed to support efficient storage and retrieval of defect information, images, and audit trails.
+This document describes the data schema for the Defects Management System. The schema is designed based on the DMF (Defect Mode and Failure analysis) format used in manufacturing quality documentation.
 
 ---
 
-## 2. Entity Relationship Diagram
+## 2. Current Implementation
+
+The system currently uses JSON-based mock data for the prototype phase. The schema below represents the data structure used.
+
+---
+
+## 3. Data Model
+
+### 3.1 DefectKnowledge (Main Entity)
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| id | string | Yes | Unique identifier |
+| failureMode | string | Yes | Failure mode name (e.g., "Exposed Wire") |
+| process | string | Yes | Process name where defect occurs |
+| processImages | string[] | Yes | Array of image URLs for process |
+| criteriaAcceptanceLimit | string | Yes | Acceptance criteria code (e.g., "AL-PH061") |
+| dri | string | Yes | Direct Responsible Individual |
+| category | DefectCategory | Yes | 4M category classification |
+| failureAnalysisRootCause | string | Yes | Root cause analysis description |
+| failureAnalysisImages | string[] | Yes | Array of image URLs for failure analysis |
+| correctiveAction | string | Yes | Corrective action steps |
+| correctiveActionImages | string[] | Yes | Array of image URLs for corrective action |
+| createdAt | Date | Yes | Creation timestamp |
+| updatedAt | Date | Yes | Last update timestamp |
+| createdBy | string | Yes | Creator name |
+| updatedBy | string | No | Last updater name |
+| isActive | boolean | Yes | Active status (default: true) |
+
+### 3.2 DefectCategory (Enum)
+
+4M Analysis categories for root cause classification:
+
+| Value | Display Name | Description |
+|-------|--------------|-------------|
+| MACHINE | Machine | Equipment or tool-related causes |
+| MAN | Man | Human error or operator-related causes |
+| METHOD | Method | Process or procedure-related causes |
+| MATERIAL | Material | Raw material or component-related causes |
+
+---
+
+## 4. TypeScript Interfaces
+
+### 4.1 DefectKnowledge Interface
+
+```typescript
+export interface DefectKnowledge {
+  id: string;
+  failureMode: string;
+  process: string;
+  processImages: string[];
+  criteriaAcceptanceLimit: string;
+  dri: string;
+  category: DefectCategory;
+  failureAnalysisRootCause: string;
+  failureAnalysisImages: string[];
+  correctiveAction: string;
+  correctiveActionImages: string[];
+  createdAt: Date;
+  updatedAt: Date;
+  createdBy: string;
+  updatedBy?: string;
+  isActive: boolean;
+}
+```
+
+### 4.2 DefectCategory Type
+
+```typescript
+export type DefectCategory = "MACHINE" | "MAN" | "METHOD" | "MATERIAL";
+
+export const DEFECT_CATEGORIES: Record<DefectCategory, string> = {
+  MACHINE: "Machine",
+  MAN: "Man",
+  METHOD: "Method",
+  MATERIAL: "Material",
+};
+```
+
+### 4.3 DefectFormData Interface
+
+```typescript
+export interface DefectFormData {
+  failureMode: string;
+  process: string;
+  processImages: string[];
+  criteriaAcceptanceLimit: string;
+  dri: string;
+  category: DefectCategory;
+  failureAnalysisRootCause: string;
+  failureAnalysisImages: string[];
+  correctiveAction: string;
+  correctiveActionImages: string[];
+  isActive: boolean;
+}
+```
+
+---
+
+## 5. JSON Data Structure
+
+### 5.1 Sample Record
+
+```json
+{
+  "id": "1",
+  "failureMode": "Exposed Wire",
+  "process": "AL-Pet Laser Marking and Manual AL-Pet removal",
+  "processImages": ["/defects/row1-img1.png"],
+  "criteriaAcceptanceLimit": "AL-PH061",
+  "dri": "Yhel",
+  "category": "MACHINE",
+  "failureAnalysisRootCause": "AL-Pet laser marking penetrate the insulation causing for initial damage and resulted to expose wire at soldering process.",
+  "failureAnalysisImages": ["/defects/row1-2-fail1.png"],
+  "correctiveAction": "Adjust the laser power setting to prevent insulation damage.",
+  "correctiveActionImages": [],
+  "createdAt": "2026-01-14",
+  "updatedAt": "2026-01-14",
+  "createdBy": "Quality Engineer",
+  "isActive": true
+}
+```
+
+### 5.2 Data File Location
 
 ```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                                                                          │
-│  ┌──────────────┐       ┌──────────────┐       ┌──────────────┐        │
-│  │    users     │       │   defects    │       │defect_images │        │
-│  ├──────────────┤       ├──────────────┤       ├──────────────┤        │
-│  │ id           │       │ id           │       │ id           │        │
-│  │ name         │       │ code         │       │ defect_id    │───┐    │
-│  │ email        │       │ name         │       │ url          │   │    │
-│  │ role         │       │ category     │       │ caption      │   │    │
-│  │ created_at   │       │ severity     │       │ image_type   │   │    │
-│  └──────┬───────┘       │ description  │       │ uploaded_at  │   │    │
-│         │               │ failure_     │       │ uploaded_by  │   │    │
-│         │               │   analysis   │       └──────────────┘   │    │
-│         │               │ root_cause   │              ▲           │    │
-│         │               │ corrective_  │              │           │    │
-│         │               │   action     │              │           │    │
-│         │               │ preventive_  │              │           │    │
-│         │               │   action     │──────────────┘           │    │
-│         │               │ created_by   │───────────────────────┐  │    │
-│         │               │ updated_by   │───────────────────┐   │  │    │
-│         │               │ created_at   │                   │   │  │    │
-│         └───────────────│ updated_at   │                   │   │  │    │
-│                         │ is_active    │                   │   │  │    │
-│                         └──────┬───────┘                   │   │  │    │
-│                                │                           │   │  │    │
-│         ┌──────────────────────┼───────────────────────────┼───┘  │    │
-│         │                      │                           │      │    │
-│         ▼                      ▼                           ▼      │    │
-│  ┌──────────────┐       ┌──────────────┐       ┌──────────────┐  │    │
-│  │defect_products│      │defect_       │       │defect_related│  │    │
-│  ├──────────────┤       │ processes    │       │    _codes    │  │    │
-│  │ id           │       ├──────────────┤       ├──────────────┤  │    │
-│  │ defect_id    │       │ id           │       │ id           │  │    │
-│  │ product_name │       │ defect_id    │       │ defect_id    │  │    │
-│  └──────────────┘       │ process_name │       │ related_code │  │    │
-│                         └──────────────┘       └──────────────┘  │    │
-│                                                                   │    │
-│  ┌──────────────┐                                                │    │
-│  │ audit_logs   │◀───────────────────────────────────────────────┘    │
-│  ├──────────────┤                                                      │
-│  │ id           │                                                      │
-│  │ table_name   │                                                      │
-│  │ record_id    │                                                      │
-│  │ action       │                                                      │
-│  │ old_values   │                                                      │
-│  │ new_values   │                                                      │
-│  │ user_id      │                                                      │
-│  │ created_at   │                                                      │
-│  └──────────────┘                                                      │
-│                                                                          │
-└─────────────────────────────────────────────────────────────────────────┘
+src/data/defects.json
 ```
 
 ---
 
-## 3. Table Definitions
+## 6. Search Functionality
 
-### 3.1 defects
+### 6.1 Search Function Signature
 
-Main table storing defect/failure mode information.
+```typescript
+export function searchDefects(
+  item?: string,      // Search in failureMode
+  category?: string,  // Search in category or process
+  defect?: string,    // General search term
+  keyword?: string    // Global keyword search
+): DefectKnowledge[]
+```
 
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| id | INT | PRIMARY KEY, AUTO_INCREMENT | Unique identifier |
-| code | VARCHAR(20) | UNIQUE, NOT NULL | Defect code (e.g., DK-001) |
-| name | VARCHAR(255) | NOT NULL | Failure mode name |
-| category | ENUM | NOT NULL | Category classification |
-| severity | ENUM | NOT NULL | Severity level |
-| description | TEXT | NOT NULL | Detailed description |
-| failure_analysis | TEXT | NOT NULL | Investigation findings |
-| root_cause | TEXT | NOT NULL | Identified root causes |
-| corrective_action | TEXT | NOT NULL | Steps to correct |
-| preventive_action | TEXT | NULL | Steps to prevent |
-| occurrence_count | INT | DEFAULT 0 | Number of occurrences |
-| last_occurrence | DATETIME | NULL | Last occurrence date |
-| created_by | VARCHAR(100) | NOT NULL | Creator name |
-| updated_by | VARCHAR(100) | NULL | Last updater name |
-| created_at | DATETIME | DEFAULT CURRENT_TIMESTAMP | Creation timestamp |
-| updated_at | DATETIME | ON UPDATE CURRENT_TIMESTAMP | Update timestamp |
-| is_active | BOOLEAN | DEFAULT TRUE | Active status |
+### 6.2 Keyword Search Fields
 
-**Indexes:**
-- PRIMARY KEY (id)
-- UNIQUE INDEX (code)
-- INDEX (category)
-- INDEX (severity)
-- INDEX (is_active)
-- FULLTEXT INDEX (name, description, root_cause, corrective_action)
-
-**Category ENUM Values:**
-- VISUAL_DEFECT
-- DIMENSIONAL_DEFECT
-- FUNCTIONAL_DEFECT
-- MATERIAL_DEFECT
-- PROCESS_DEFECT
-- ASSEMBLY_DEFECT
-- PACKAGING_DEFECT
-- OTHER
-
-**Severity ENUM Values:**
-- CRITICAL
-- MAJOR
-- MINOR
-- COSMETIC
-
-### 3.2 defect_images
-
-Stores images associated with defects.
-
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| id | INT | PRIMARY KEY, AUTO_INCREMENT | Unique identifier |
-| defect_id | INT | FOREIGN KEY, NOT NULL | Reference to defects |
-| url | VARCHAR(500) | NOT NULL | Image file path/URL |
-| caption | VARCHAR(255) | NULL | Image caption |
-| image_type | ENUM | NOT NULL | Type of image |
-| uploaded_at | DATETIME | DEFAULT CURRENT_TIMESTAMP | Upload timestamp |
-| uploaded_by | VARCHAR(100) | NOT NULL | Uploader name |
-
-**Indexes:**
-- PRIMARY KEY (id)
-- INDEX (defect_id)
-- FOREIGN KEY (defect_id) REFERENCES defects(id) ON DELETE CASCADE
-
-**Image Type ENUM Values:**
-- defect
-- root_cause
-- corrective_action
-- reference
-
-### 3.3 defect_products
-
-Many-to-many relationship for applicable products.
-
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| id | INT | PRIMARY KEY, AUTO_INCREMENT | Unique identifier |
-| defect_id | INT | FOREIGN KEY, NOT NULL | Reference to defects |
-| product_name | VARCHAR(100) | NOT NULL | Product name |
-
-**Indexes:**
-- PRIMARY KEY (id)
-- INDEX (defect_id)
-- UNIQUE INDEX (defect_id, product_name)
-- FOREIGN KEY (defect_id) REFERENCES defects(id) ON DELETE CASCADE
-
-### 3.4 defect_processes
-
-Many-to-many relationship for applicable processes.
-
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| id | INT | PRIMARY KEY, AUTO_INCREMENT | Unique identifier |
-| defect_id | INT | FOREIGN KEY, NOT NULL | Reference to defects |
-| process_name | VARCHAR(100) | NOT NULL | Process name |
-
-**Indexes:**
-- PRIMARY KEY (id)
-- INDEX (defect_id)
-- UNIQUE INDEX (defect_id, process_name)
-- FOREIGN KEY (defect_id) REFERENCES defects(id) ON DELETE CASCADE
-
-### 3.5 defect_related_codes
-
-Links to P-Chart system defect codes.
-
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| id | INT | PRIMARY KEY, AUTO_INCREMENT | Unique identifier |
-| defect_id | INT | FOREIGN KEY, NOT NULL | Reference to defects |
-| related_code | VARCHAR(50) | NOT NULL | P-Chart defect code |
-
-**Indexes:**
-- PRIMARY KEY (id)
-- INDEX (defect_id)
-- UNIQUE INDEX (defect_id, related_code)
-- FOREIGN KEY (defect_id) REFERENCES defects(id) ON DELETE CASCADE
-
-### 3.6 users (Future)
-
-User management table.
-
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| id | INT | PRIMARY KEY, AUTO_INCREMENT | Unique identifier |
-| name | VARCHAR(100) | NOT NULL | User full name |
-| email | VARCHAR(255) | UNIQUE, NOT NULL | Email address |
-| password_hash | VARCHAR(255) | NOT NULL | Hashed password |
-| role | ENUM | NOT NULL | User role |
-| department | VARCHAR(100) | NULL | Department |
-| is_active | BOOLEAN | DEFAULT TRUE | Active status |
-| created_at | DATETIME | DEFAULT CURRENT_TIMESTAMP | Creation timestamp |
-| last_login | DATETIME | NULL | Last login timestamp |
-
-**Role ENUM Values:**
-- ADMIN
-- QUALITY_ENGINEER
-- PROCESS_ENGINEER
-- SUPERVISOR
-- OPERATOR
-- VIEWER
-
-### 3.7 audit_logs
-
-Tracks all changes to defect records.
-
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| id | INT | PRIMARY KEY, AUTO_INCREMENT | Unique identifier |
-| table_name | VARCHAR(50) | NOT NULL | Table that was modified |
-| record_id | INT | NOT NULL | ID of modified record |
-| action | ENUM | NOT NULL | Type of action |
-| old_values | JSON | NULL | Previous values |
-| new_values | JSON | NULL | New values |
-| user_id | INT | NULL | User who made change |
-| user_name | VARCHAR(100) | NOT NULL | User name |
-| created_at | DATETIME | DEFAULT CURRENT_TIMESTAMP | Timestamp |
-
-**Action ENUM Values:**
-- CREATE
-- UPDATE
-- DELETE
-- ACTIVATE
-- DEACTIVATE
+The keyword search searches across:
+- failureMode
+- process
+- failureAnalysisRootCause
+- correctiveAction
+- criteriaAcceptanceLimit
+- dri
+- category
 
 ---
 
-## 4. SQL Schema
+## 7. Image Storage
+
+### 7.1 Current Implementation
+
+Images are stored as static files in the public directory:
+
+```
+public/defects/
+  ├── row1-img1.png
+  ├── row1-2-fail1.png
+  ├── row2-fail1.png
+  ├── row3-img1.png
+  ├── row3-img2.png
+  ├── row3-img3.png
+  ├── row3-fail1.png
+  ├── row3-fail2.png
+  ├── row3-corrective1.png
+  └── ...
+```
+
+### 7.2 Image URL Format
+
+Images are referenced by their public path:
+- `/defects/row1-img1.png`
+- `/defects/row3-corrective1.png`
+
+---
+
+## 8. Future Database Schema (SQL)
+
+### 8.1 defects Table
 
 ```sql
--- Create database
-CREATE DATABASE IF NOT EXISTS defect_knowledge_base
-CHARACTER SET utf8mb4
-COLLATE utf8mb4_unicode_ci;
-
-USE defect_knowledge_base;
-
--- Defects table
 CREATE TABLE defects (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    code VARCHAR(20) NOT NULL UNIQUE,
-    name VARCHAR(255) NOT NULL,
-    category ENUM(
-        'VISUAL_DEFECT',
-        'DIMENSIONAL_DEFECT',
-        'FUNCTIONAL_DEFECT',
-        'MATERIAL_DEFECT',
-        'PROCESS_DEFECT',
-        'ASSEMBLY_DEFECT',
-        'PACKAGING_DEFECT',
-        'OTHER'
-    ) NOT NULL,
-    severity ENUM('CRITICAL', 'MAJOR', 'MINOR', 'COSMETIC') NOT NULL,
-    description TEXT NOT NULL,
-    failure_analysis TEXT NOT NULL,
-    root_cause TEXT NOT NULL,
+    id VARCHAR(36) PRIMARY KEY,
+    failure_mode VARCHAR(255) NOT NULL,
+    process VARCHAR(500) NOT NULL,
+    criteria_acceptance_limit VARCHAR(50) NOT NULL,
+    dri VARCHAR(100) NOT NULL,
+    category ENUM('MACHINE', 'MAN', 'METHOD', 'MATERIAL') NOT NULL,
+    failure_analysis_root_cause TEXT NOT NULL,
     corrective_action TEXT NOT NULL,
-    preventive_action TEXT,
-    occurrence_count INT DEFAULT 0,
-    last_occurrence DATETIME,
-    created_by VARCHAR(100) NOT NULL,
-    updated_by VARCHAR(100),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by VARCHAR(100) NOT NULL,
+    updated_by VARCHAR(100),
     is_active BOOLEAN DEFAULT TRUE,
     
     INDEX idx_category (category),
-    INDEX idx_severity (severity),
     INDEX idx_is_active (is_active),
-    FULLTEXT INDEX idx_search (name, description, root_cause, corrective_action)
+    FULLTEXT INDEX idx_search (failure_mode, process, failure_analysis_root_cause, corrective_action)
 ) ENGINE=InnoDB;
+```
 
--- Defect images table
+### 8.2 defect_images Table
+
+```sql
 CREATE TABLE defect_images (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    defect_id INT NOT NULL,
+    id VARCHAR(36) PRIMARY KEY,
+    defect_id VARCHAR(36) NOT NULL,
     url VARCHAR(500) NOT NULL,
-    caption VARCHAR(255),
-    image_type ENUM('defect', 'root_cause', 'corrective_action', 'reference') NOT NULL,
+    image_type ENUM('process', 'failure_analysis', 'corrective_action') NOT NULL,
+    sort_order INT DEFAULT 0,
     uploaded_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    uploaded_by VARCHAR(100) NOT NULL,
     
     INDEX idx_defect_id (defect_id),
     FOREIGN KEY (defect_id) REFERENCES defects(id) ON DELETE CASCADE
-) ENGINE=InnoDB;
-
--- Defect products table
-CREATE TABLE defect_products (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    defect_id INT NOT NULL,
-    product_name VARCHAR(100) NOT NULL,
-    
-    INDEX idx_defect_id (defect_id),
-    UNIQUE INDEX idx_defect_product (defect_id, product_name),
-    FOREIGN KEY (defect_id) REFERENCES defects(id) ON DELETE CASCADE
-) ENGINE=InnoDB;
-
--- Defect processes table
-CREATE TABLE defect_processes (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    defect_id INT NOT NULL,
-    process_name VARCHAR(100) NOT NULL,
-    
-    INDEX idx_defect_id (defect_id),
-    UNIQUE INDEX idx_defect_process (defect_id, process_name),
-    FOREIGN KEY (defect_id) REFERENCES defects(id) ON DELETE CASCADE
-) ENGINE=InnoDB;
-
--- Defect related codes table
-CREATE TABLE defect_related_codes (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    defect_id INT NOT NULL,
-    related_code VARCHAR(50) NOT NULL,
-    
-    INDEX idx_defect_id (defect_id),
-    UNIQUE INDEX idx_defect_code (defect_id, related_code),
-    FOREIGN KEY (defect_id) REFERENCES defects(id) ON DELETE CASCADE
-) ENGINE=InnoDB;
-
--- Audit logs table
-CREATE TABLE audit_logs (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    table_name VARCHAR(50) NOT NULL,
-    record_id INT NOT NULL,
-    action ENUM('CREATE', 'UPDATE', 'DELETE', 'ACTIVATE', 'DEACTIVATE') NOT NULL,
-    old_values JSON,
-    new_values JSON,
-    user_id INT,
-    user_name VARCHAR(100) NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    
-    INDEX idx_table_record (table_name, record_id),
-    INDEX idx_created_at (created_at)
 ) ENGINE=InnoDB;
 ```
 
 ---
 
-## 5. Sample Queries
+## 9. Data Migration
 
-### 5.1 Search Defects
+### 9.1 From Excel/DMF Files
 
-```sql
--- Full-text search
-SELECT * FROM defects
-WHERE MATCH(name, description, root_cause, corrective_action) 
-      AGAINST('solder bridge' IN NATURAL LANGUAGE MODE)
-AND is_active = TRUE
-ORDER BY severity = 'CRITICAL' DESC, updated_at DESC;
-```
+The data is sourced from DMF Excel files with the following column mapping:
 
-### 5.2 Get Defect with Related Data
+| Excel Column | JSON Field |
+|--------------|------------|
+| Failure Mode | failureMode |
+| Process | process |
+| Process Images | processImages |
+| Criteria / Acceptance Limit | criteriaAcceptanceLimit |
+| DRI | dri |
+| Category | category |
+| Failure Analysis / Root Cause | failureAnalysisRootCause |
+| FA Images | failureAnalysisImages |
+| Corrective Action | correctiveAction |
+| CA Images | correctiveActionImages |
 
-```sql
-SELECT 
-    d.*,
-    GROUP_CONCAT(DISTINCT dp.product_name) AS products,
-    GROUP_CONCAT(DISTINCT dpr.process_name) AS processes,
-    GROUP_CONCAT(DISTINCT drc.related_code) AS related_codes
-FROM defects d
-LEFT JOIN defect_products dp ON d.id = dp.defect_id
-LEFT JOIN defect_processes dpr ON d.id = dpr.defect_id
-LEFT JOIN defect_related_codes drc ON d.id = drc.defect_id
-WHERE d.id = ?
-GROUP BY d.id;
-```
+### 9.2 Key Principle
 
-### 5.3 Dashboard Statistics
-
-```sql
--- Total counts
-SELECT 
-    COUNT(*) AS total,
-    SUM(is_active) AS active,
-    SUM(severity = 'CRITICAL') AS critical,
-    COUNT(DISTINCT category) AS categories
-FROM defects;
-
--- Category breakdown
-SELECT category, COUNT(*) AS count
-FROM defects
-WHERE is_active = TRUE
-GROUP BY category
-ORDER BY count DESC;
-```
+Each row of data represents a unique failure analysis/root cause. Multiple rows may share the same failure mode but have different root causes and corrective actions.
 
 ---
 
-## 6. Data Migration
+## 10. Validation Rules
 
-### 6.1 From Excel/CSV
+### 10.1 Required Fields
 
-```sql
--- Load data from CSV
-LOAD DATA INFILE '/path/to/defects.csv'
-INTO TABLE defects
-FIELDS TERMINATED BY ','
-ENCLOSED BY '"'
-LINES TERMINATED BY '\n'
-IGNORE 1 ROWS
-(code, name, category, severity, description, 
- failure_analysis, root_cause, corrective_action, 
- preventive_action, created_by);
-```
+All fields except `updatedBy` are required for a valid defect record.
 
-### 6.2 Backup Script
+### 10.2 Field Constraints
 
-```bash
-#!/bin/bash
-DATE=$(date +%Y%m%d_%H%M%S)
-mysqldump -u user -p defect_knowledge_base > backup_$DATE.sql
-```
+| Field | Constraint |
+|-------|------------|
+| id | Unique, non-empty string |
+| failureMode | Non-empty string |
+| process | Non-empty string |
+| processImages | Array (can be empty) |
+| criteriaAcceptanceLimit | Non-empty string |
+| dri | Non-empty string |
+| category | Must be valid DefectCategory |
+| failureAnalysisRootCause | Non-empty string |
+| failureAnalysisImages | Array (can be empty) |
+| correctiveAction | Non-empty string |
+| correctiveActionImages | Array (can be empty) |

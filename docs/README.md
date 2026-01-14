@@ -1,78 +1,72 @@
-# Defects Management - Documentation
+# Documentation Index
 
-## Overview
+## Defects Management System
 
 This folder contains all documentation for the Defects Management System.
 
 ---
 
-## Document Index
+## Documents
 
-### Product & Design
-
-| Document | Description |
-|----------|-------------|
-| [prd.md](./prd.md) | Product Requirement Document - Features, requirements, and roadmap |
-| [drd.md](./drd.md) | Design Requirement Document - UI/UX specifications and guidelines |
-
-### Technical
-
-| Document | Description |
-|----------|-------------|
-| [process-flow.md](./process-flow.md) | Process Flow Documentation - User workflows and data flows |
-| [database-schema.md](./database-schema.md) | Database Schema - Table definitions and SQL |
-| [api-specification.md](./api-specification.md) | API Specification - REST endpoints and formats |
-
-### User Documentation
-
-| Document | Description |
-|----------|-------------|
-| [user-guide.md](./user-guide.md) | User Guide - How to use the system |
+| Document | Description | Last Updated |
+|----------|-------------|--------------|
+| [PRD](./prd.md) | Product Requirements Document - Features, roadmap, and specifications | v2.0 |
+| [DRD](./drd.md) | Design Requirements Document - UI/UX specifications, colors, components | v2.0 |
+| [Database Schema](./database-schema.md) | Data model and schema documentation | v2.0 |
+| [Process Flow](./process-flow.md) | User workflows and data flows | v1.0 |
+| [API Specification](./api-specification.md) | REST API endpoints (future) | v1.0 |
+| [User Guide](./user-guide.md) | How to use the system | v2.0 |
 
 ---
 
-## Quick Links
+## Quick Reference
 
-### For Product Managers
-- Start with [PRD](./prd.md) for feature requirements
-- Review [Process Flow](./process-flow.md) for user workflows
+### System Overview
 
-### For Designers
-- Review [DRD](./drd.md) for design specifications
-- Check the in-app [Design Guide](/design-guide) for live components
+The Defects Management System is a web application for managing manufacturing defect information based on DMF (Defect Mode and Failure analysis) format.
 
-### For Developers
-- [Database Schema](./database-schema.md) for data structure
-- [API Specification](./api-specification.md) for endpoint details
-- [Process Flow](./process-flow.md) for system architecture
+### Key Features
 
-### For End Users
-- [User Guide](./user-guide.md) for how to use the system
+- **Dashboard Search** - Simple three-field search interface
+- **DataTable** - Professional sortable, paginated defects list
+- **Responsive Design** - Table view on desktop, cards on mobile
+- **Keyword Search** - Global search from navigation header
+- **Image Viewer** - Clickable images with modal display
+- **4M Categories** - Machine, Man, Method, Material classification
+
+### Data Structure
+
+Each defect record contains:
+- Failure Mode
+- Process (with images)
+- Criteria / Acceptance Limit
+- DRI (Direct Responsible Individual)
+- Category (4M)
+- Failure Analysis / Root Cause (with images)
+- Corrective Action (with images)
+
+### Tech Stack
+
+- Next.js 15 (App Router)
+- TypeScript
+- Tailwind CSS
+- shadcn/ui
+- Lucide React icons
+
+---
+
+## Getting Started
+
+1. Read the [User Guide](./user-guide.md) to understand how to use the system
+2. Review the [PRD](./prd.md) for feature details
+3. Check the [DRD](./drd.md) for design specifications
+4. See [Database Schema](./database-schema.md) for data model details
 
 ---
 
 ## Version History
 
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.0 | 2026-01-11 | - | Initial documentation |
-
----
-
-## Contributing
-
-When updating documentation:
-
-1. Keep documents up-to-date with code changes
-2. Use consistent formatting (Markdown)
-3. Include examples where helpful
-4. Update the version history
-
----
-
-## Related Resources
-
-- **Design Guide**: `/design-guide` (in-app)
-- **Source Code**: `/src`
-- **Components**: `/src/components`
-- **Types**: `/src/types`
+| Version | Date | Changes |
+|---------|------|---------|
+| 2.0 | 2026-01-15 | DMF-based data model, DataTable, responsive design |
+| 1.0 | 2026-01-14 | Initial documentation |

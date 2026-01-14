@@ -2,13 +2,13 @@
 
 ## Defects Management System
 
-## Version: 1.0
+## Version: 2.0
 
 ---
 
 ## 1. Introduction
 
-Welcome to the Defects Management System! This guide will help you understand how to use the system effectively to search for defect information, document new failure modes, and access corrective actions.
+Welcome to the Defects Management System! This guide will help you understand how to use the system to search for defect information, view root cause analysis, and access corrective actions based on DMF (Defect Mode and Failure analysis) format.
 
 ---
 
@@ -16,275 +16,241 @@ Welcome to the Defects Management System! This guide will help you understand ho
 
 ### 2.1 Accessing the System
 
-1. Open your web browser (Chrome, Firefox, Safari, or Edge recommended)
-2. Navigate to the system URL provided by your administrator
-3. The Dashboard will be displayed as the home page
+1. Open your web browser (Chrome, Firefox, Safari, or Edge)
+2. Navigate to the system URL (default: http://localhost:3000)
+3. The Dashboard search interface will be displayed
 
 ### 2.2 Navigation
 
-The navigation bar at the top provides quick access to all main sections:
+The navigation bar at the top provides quick access to all sections:
 
 | Menu Item | Description |
 |-----------|-------------|
-| Dashboard | Home page with statistics and quick actions |
+| Dashboard | Home page with search interface |
 | Defects Management | Browse and search all defects |
 | Add New | Create a new defect record |
-| Settings | System configuration (admin only) |
+| Settings | System configuration |
+
+### 2.3 Quick Search
+
+Use the search input in the navigation header to quickly search for defects by keyword. Press Enter or click away to search.
 
 ---
 
 ## 3. Dashboard
 
-The Dashboard provides an overview of the system and quick access to common actions.
+The Dashboard provides a simple search interface for finding defects.
 
-### 3.1 Quick Actions
+### 3.1 Search Form
 
-- **Search Defects**: Jump directly to the search page
-- **Add New Defect**: Create a new defect record
-- **Browse All**: View the complete defect list
+Three search fields are available:
 
-### 3.2 Statistics Cards
+| Field | Description | Example |
+|-------|-------------|---------|
+| Item | Search by failure mode | "Exposed Wire" |
+| Category | Search by 4M category or process | "Machine" |
+| Defect | General search term | "laser" |
 
-- **Total Defects**: Number of documented defects
-- **Active**: Currently active defect records
-- **Critical**: High-severity defects requiring attention
-- **Categories**: Number of defect categories in use
+### 3.2 Using the Search
 
-### 3.3 Recently Updated
-
-Shows the 5 most recently updated defect records for quick access.
-
-### 3.4 Category Breakdown
-
-Visual representation of defects by category.
+1. Enter your search terms in one or more fields
+2. Click the "Search" button
+3. You will be redirected to the defects list with filtered results
 
 ---
 
-## 4. Searching for Defects
+## 4. Defects DataTable
 
-### 4.1 Using the Search Bar
+The defects list displays all defect records in a professional DataTable format.
 
-1. Click on "Defects Management" in the navigation
-2. Enter your search term in the search box
-3. The system searches across:
-   - Defect name
-   - Defect code
-   - Description
-   - Root cause
-   - Corrective action
+### 4.1 Desktop View (Table)
 
-**Tips for effective searching:**
-- Use keywords from the defect description
-- Try different terms if initial search doesn't find results
-- Use partial words (e.g., "solder" instead of "solder bridge")
+On desktop screens (1024px and wider), defects are displayed in a table with columns:
 
-### 4.2 Using Filters
+| Column | Description | Sortable |
+|--------|-------------|----------|
+| Failure Mode | Name of the defect type | Yes |
+| Process | Where the defect occurs | Yes |
+| Criteria | Acceptance limit code | Yes |
+| DRI | Responsible person | Yes |
+| Category | 4M classification | Yes |
+| Failure Analysis | Root cause with images | No |
+| Corrective Action | Fix steps with images | No |
+| Actions | View/Edit buttons | No |
 
-Click the "Filters" button to access additional filtering options:
+### 4.2 Mobile View (Cards)
 
-**Category Filter:**
-- Visual Defect
-- Dimensional Defect
-- Functional Defect
-- Material Defect
-- Process Defect
-- Assembly Defect
-- Packaging Defect
-- Other
+On smaller screens, defects are displayed as cards with:
+- Header: Failure mode, process, and action buttons
+- Badges: Category, criteria, and DRI
+- Sections: Process images, failure analysis, corrective action
 
-**Severity Filter:**
-- Critical (Red) - Immediate action required
-- Major (Orange) - Significant impact
-- Minor (Blue) - Limited impact
-- Cosmetic (Gray) - Appearance only
+### 4.3 Sorting
 
-### 4.3 Understanding Search Results
+Click on sortable column headers to sort:
+1. First click: Sort ascending (arrow up)
+2. Second click: Sort descending (arrow down)
+3. Third click: Clear sort
 
-The results table shows:
-- **Code**: Unique defect identifier (e.g., DK-001)
-- **Failure Mode**: Name of the defect
-- **Category**: Type of defect
-- **Severity**: Impact level
-- **Images**: Number of reference images
-- **Updated**: Last modification date
+### 4.4 Pagination
 
-Click on any row to view full details.
+Navigate through pages using the pagination controls:
+- First/Last page buttons
+- Previous/Next buttons
+- Page number buttons
+- Items per page selector (5, 10, 25, 50)
+
+### 4.5 Keyword Search
+
+Use the search input in the navigation header:
+1. Type your search term
+2. Press Enter or click away from the field
+3. Results will be filtered
+4. Active search shows as a purple badge
+5. Click "Clear filters" to reset
 
 ---
 
 ## 5. Viewing Defect Details
 
-### 5.1 Overview Tab
+Click "View" on any defect to see the full detail page.
 
-The Overview tab provides:
-- **Description**: What the defect looks like
-- **Quick Reference for Manufacturing**: 
-  - Immediate actions to take
-  - Prevention steps
+### 5.1 Page Sections
 
-### 5.2 Investigation Tab
+The detail page shows three main sections:
 
-Contains detailed investigation results:
-- **Failure Analysis**: How the defect was investigated
-- **Root Cause**: Why the defect occurred
+**Process Details**
+- Process name
+- Process images (clickable for full view)
 
-### 5.3 Corrective Actions Tab
+**Failure Analysis / Root Cause**
+- Root cause description
+- Evidence images (clickable)
 
-Shows the actions to address the defect:
-- **Corrective Action**: Steps to fix the defect
-- **Preventive Action**: Steps to prevent recurrence
+**Corrective Action**
+- Steps to resolve the defect
+- Reference images (clickable)
 
-### 5.4 Images Tab
+### 5.2 Sidebar Information
 
-Visual references for the defect:
-- Defect examples
-- Root cause illustrations
-- Corrective action guides
+- 4M Category badge
+- Criteria/Acceptance Limit
+- DRI (responsible person)
+- Created/Updated timestamps
+- Created by information
 
-### 5.5 Sidebar Information
+### 5.3 Viewing Images
 
-- Category and severity
-- Applicable products and processes
-- Related P-Chart codes
-- Audit trail (who created/updated)
+Click any image to open it in a full-size modal:
+- Images display at maximum viewable size
+- Click outside the image or the X button to close
+- All images are clickable throughout the system
 
 ---
 
 ## 6. Adding a New Defect
 
-### 6.1 When to Add a New Defect
+### 6.1 When to Add
 
 Add a new defect when:
-- A new type of failure mode is discovered
+- A new failure mode is discovered
 - Investigation is complete with root cause identified
 - Corrective actions have been validated
 
-### 6.2 Required Information
+### 6.2 Required Fields
 
 | Field | Description | Example |
 |-------|-------------|---------|
-| Defect Code | Unique identifier | DK-009 |
-| Defect Name | Failure mode name | Solder Ball |
-| Category | Type of defect | Process Defect |
-| Severity | Impact level | Major |
-| Description | What it looks like | Small spheres of solder... |
-| Failure Analysis | Investigation findings | Analysis showed... |
-| Root Cause | Why it happened | 1. Reflow profile... |
-| Corrective Action | How to fix | 1. Adjust reflow... |
+| Failure Mode | Name of the defect | "Exposed Wire" |
+| Process | Where it occurs | "Laser Marking" |
+| Criteria | Acceptance code | "AL-PH061" |
+| DRI | Responsible person | "Yhel" |
+| Category | 4M classification | "Machine" |
+| Root Cause | Why it happened | "Laser power too high..." |
+| Corrective Action | How to fix | "Adjust laser settings..." |
 
-### 6.3 Step-by-Step Process
+### 6.3 Adding Images
 
-1. Click "Add New" in the navigation
-2. Fill in the Basic Information section:
-   - Enter a unique defect code
-   - Enter the failure mode name
-   - Select category and severity
-   - Write a clear description
-3. Fill in Investigation Results:
-   - Document the failure analysis
-   - List root causes (use numbered list)
-4. Fill in Corrective & Preventive Actions:
-   - List corrective steps (use numbered list)
-   - Add preventive measures (optional)
-5. Add Additional Information (optional):
-   - Applicable products
-   - Applicable processes
-   - Related P-Chart codes
-6. Click "Save Defect"
+Each section supports multiple images:
+- Process Images
+- Failure Analysis Images
+- Corrective Action Images
 
-### 6.4 Writing Effective Content
-
-**Description:**
-- Be specific and clear
-- Describe visual characteristics
-- Include measurable criteria if possible
-
-**Root Cause:**
-- Use numbered lists
-- Start with most significant cause
-- Be specific about conditions
-
-**Corrective Action:**
-- Use numbered steps
-- Make actions specific and measurable
-- Include tools/materials needed
+Images are added by URL path (e.g., /defects/image.png)
 
 ---
 
-## 7. Editing Existing Defects
+## 7. Editing Defects
 
-### 7.1 When to Edit
-
-Edit a defect when:
-- New information is discovered
-- Corrective actions are refined
-- Better images are available
-- Errors need correction
-
-### 7.2 How to Edit
+### 7.1 How to Edit
 
 1. Navigate to the defect detail page
 2. Click "Edit Defect" button
-3. Make your changes
-4. Click "Save Changes"
+3. Modify the fields as needed
+4. Manage images in each section
+5. Click "Save Changes"
 
-### 7.3 What Gets Tracked
+### 7.2 Image Management
 
-The system automatically tracks:
-- Who made the update
-- When the update was made
-- Previous values (audit log)
-
----
-
-## 8. Best Practices
-
-### 8.1 For Production Operators
-
-1. **Search First**: Always search for existing defects before reporting new ones
-2. **Use Quick Reference**: Follow the "Quick Reference for Manufacturing" section
-3. **Report Gaps**: If information is missing or unclear, notify QC
-
-### 8.2 For Quality Engineers
-
-1. **Document Completely**: Fill in all required fields
-2. **Use Clear Language**: Write for operators, not engineers
-3. **Add Images**: Visual references help identification
-4. **Update Regularly**: Keep information current
-
-### 8.3 For Supervisors
-
-1. **Verify Actions**: Ensure operators follow documented procedures
-2. **Track Patterns**: Use dashboard to identify trends
-3. **Provide Feedback**: Report issues with documentation
+In edit mode, each image section shows:
+- Existing images with remove button (X)
+- "Click to Add Image" placeholder
 
 ---
 
-## 9. Severity Level Guide
+## 8. Understanding 4M Categories
 
-### Critical (Red)
-- Safety hazard
-- Complete product failure
-- Customer impact certain
-- **Action**: Stop production, escalate immediately
+### 8.1 Machine
 
-### Major (Orange)
-- Significant functional impact
-- High customer complaint risk
-- Rework required
-- **Action**: Isolate affected units, notify supervisor
+- Equipment malfunction
+- Tool wear or damage
+- Calibration issues
+- **Badge**: Blue
 
-### Minor (Blue)
-- Limited functional impact
-- Low customer complaint risk
-- May be acceptable with deviation
-- **Action**: Document and continue with awareness
+### 8.2 Man
 
-### Cosmetic (Gray)
-- Appearance only
-- No functional impact
-- Customer may notice
-- **Action**: Document for tracking
+- Operator error
+- Training gaps
+- Fatigue or distraction
+- **Badge**: Yellow
+
+### 8.3 Method
+
+- Process issues
+- Procedure gaps
+- Workflow problems
+- **Badge**: Gray
+
+### 8.4 Material
+
+- Raw material defects
+- Component issues
+- Supplier problems
+- **Badge**: White/Outline
+
+---
+
+## 9. Tips for Effective Use
+
+### 9.1 Searching
+
+- Use specific keywords from the defect description
+- Try different terms if initial search fails
+- Use the header search for quick filtering
+- Clear filters to see all defects
+
+### 9.2 Viewing
+
+- Click images to see full details
+- Check all three sections (process, analysis, corrective)
+- Note the DRI for follow-up questions
+
+### 9.3 Documentation
+
+- Include clear, specific descriptions
+- Add relevant images for each section
+- Keep corrective actions actionable
+- Update records when new information is available
 
 ---
 
@@ -294,22 +260,21 @@ The system automatically tracks:
 
 - Try different search terms
 - Check spelling
-- Remove filters
-- Ask QC if defect is documented
+- Clear filters and browse manually
+- Ask Quality Engineering if defect is documented
 
-### 10.2 Page Not Loading
+### 10.2 Images Not Loading
+
+- Check if image file exists in /public/defects/
+- Verify the image URL path is correct
+- Refresh the page
+
+### 10.3 Page Not Loading
 
 - Refresh the browser
 - Clear browser cache
 - Check internet connection
-- Contact IT support
-
-### 10.3 Can't Save Changes
-
-- Check all required fields are filled
-- Look for error messages
-- Try again after a few minutes
-- Contact administrator
+- Verify dev server is running (npm run dev)
 
 ---
 
@@ -317,22 +282,19 @@ The system automatically tracks:
 
 | Term | Definition |
 |------|------------|
-| Failure Mode | A specific way in which a product or process can fail |
-| Root Cause | The fundamental reason for a defect occurrence |
-| Corrective Action | Steps taken to eliminate the cause of a detected defect |
-| Preventive Action | Steps taken to eliminate the cause of a potential defect |
-| Severity | Classification of defect impact |
-| P-Chart | Statistical process control chart for defect tracking |
+| Failure Mode | A specific way a product or process can fail |
+| Root Cause | The fundamental reason for a defect |
+| Corrective Action | Steps to eliminate the cause of a defect |
+| DMF | Defect Mode and Failure analysis format |
+| 4M | Machine, Man, Method, Material categories |
+| DRI | Direct Responsible Individual |
+| DataTable | Interactive table with sorting and pagination |
 
 ---
 
 ## 12. Support
 
-For technical support or questions:
+For questions or issues:
 - Contact your Quality Engineering team
-- Email: [support email]
-- Phone: [support phone]
-
-For system issues:
-- Contact IT Support
-- Reference: Defects Management System
+- Review this documentation
+- Check the Design Guide page for UI reference
