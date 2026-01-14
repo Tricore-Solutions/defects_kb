@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -602,7 +602,7 @@ export default function DocsPage() {
   // Simple markdown-like rendering
   const renderContent = (content: string) => {
     const lines = content.split("\n");
-    const elements: JSX.Element[] = [];
+    const elements: React.ReactNode[] = [];
     let inTable = false;
     let tableRows: string[] = [];
     let inCodeBlock = false;
@@ -800,10 +800,11 @@ export default function DocsPage() {
   };
 
   return (
-    <DashboardLayout
-      title="Documentation"
-      subtitle="System documentation for clients and developers"
-    >
+    <DashboardLayout>
+      <div className="py-6">
+        <h1 className="text-2xl font-bold text-gray-900 mb-1">Documentation</h1>
+        <p className="text-gray-600 mb-6">System documentation for clients and developers</p>
+      </div>
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Sidebar Navigation */}
         <div className="lg:w-64 flex-shrink-0">
