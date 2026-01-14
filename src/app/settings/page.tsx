@@ -18,7 +18,7 @@ export default function SettingsPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card className="opacity-50">
+          {/* <Card className="opacity-50">
             <CardHeader>
               <CardTitle className="flex items-center">
                 <Database className="h-5 w-5 mr-2 text-purple-600" />
@@ -33,7 +33,7 @@ export default function SettingsPage() {
                 (Available in full version)
               </p>
             </CardContent>
-          </Card>
+          </Card> */}
 
           <Card className="opacity-50">
             <CardHeader>
@@ -69,7 +69,7 @@ export default function SettingsPage() {
             </CardContent>
           </Card>
 
-          <Card className="opacity-50">
+          {/* <Card className="opacity-50">
             <CardHeader>
               <CardTitle className="flex items-center">
                 <Bell className="h-5 w-5 mr-2 text-orange-600" />
@@ -84,7 +84,7 @@ export default function SettingsPage() {
                 (Available in full version)
               </p>
             </CardContent>
-          </Card>
+          </Card> */}
         </div>
 
         <Card className="mt-6 bg-yellow-50 border-yellow-200">

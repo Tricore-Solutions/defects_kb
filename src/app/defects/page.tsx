@@ -274,7 +274,7 @@ function DefectsListContent() {
         </div>
 
         {/* Legend */}
-        <Card className="mt-6 bg-gray-50 dark:bg-gray-800/50">
+        {/* <Card className="mt-6 bg-gray-50 dark:bg-gray-800/50">
           <CardContent className="py-4">
             <div className="flex flex-wrap items-center gap-4 text-sm">
               <span className="font-medium text-gray-700">
@@ -299,7 +299,7 @@ function DefectsListContent() {
               ))}
             </div>
           </CardContent>
-        </Card>
+        </Card> */}
       </div>
     </DashboardLayout>
   );
