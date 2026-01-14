@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { cn } from "@/lib/utils";
 import {
   Search,
@@ -16,7 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-export default function Navigation() {
+function NavigationContent() {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -201,5 +201,42 @@ export default function Navigation() {
         )}
       </div>
     </nav>
+  );
+}
+
+export default function Navigation() {
+  return (
+    <Suspense fallback={
+      <nav className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center">
+              <Link href="/" className="flex items-center space-x-2 shrink-0">
+                <Database className="h-6 w-6 sm:h-8 sm:w-8 text-purple-600" />
+                <span className="text-lg sm:text-xl font-bold text-purple-700 hidden xs:inline sm:inline">
+                  Defects Management
+                </span>
+              </Link>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="hidden lg:block relative w-64">
+                <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+                <Input
+                  type="search"
+                  placeholder="Search keyword"
+                  className="pl-8 h-9"
+                  disabled
+                />
+              </div>
+              <Button variant="ghost" size="icon" className="md:hidden">
+                <Menu className="h-5 w-5" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      </nav>
+    }>
+      <NavigationContent />
+    </Suspense>
   );
 }
