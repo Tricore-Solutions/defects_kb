@@ -52,6 +52,9 @@ export default function AddDefectPage() {
     category: "MACHINE",
     failureAnalysisRootCause: "",
     correctiveAction: "",
+    processImages: [],
+    failureAnalysisImages: [],
+    correctiveActionImages: [],
     isActive: true,
   });
 

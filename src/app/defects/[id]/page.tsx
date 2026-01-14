@@ -64,6 +64,13 @@ export default function DefectDetailPage() {
     );
   }
 
+  // Aggregate all images for the gallery view
+  const allImages = [
+    ...(defect.processImages || []),
+    ...(defect.failureAnalysisImages || []),
+    ...(defect.correctiveActionImages || []),
+  ];
+
   return (
     <DashboardLayout>
       <div className="py-6">
@@ -136,7 +143,7 @@ export default function DefectDetailPage() {
             </TabsTrigger>
             <TabsTrigger value="images" className="flex items-center gap-2">
               <ImageIcon className="h-4 w-4" />
-              Images ({defect.images.length})
+              Images ({allImages.length})
             </TabsTrigger>
           </TabsList>
 
@@ -165,6 +172,23 @@ export default function DefectDetailPage() {
                         <div className="bg-white dark:bg-gray-800 rounded-lg p-4 whitespace-pre-line text-sm">
                           {defect.correctiveAction}
                         </div>
+                        {defect.correctiveActionImages && defect.correctiveActionImages.length > 0 && (
+                          <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            {defect.correctiveActionImages.map((img, idx) => (
+                              <div key={idx} className="relative aspect-video bg-gray-100 rounded overflow-hidden border border-gray-200">
+                                <img
+                                  src={img}
+                                  alt={`Corrective Action ${idx + 1}`}
+                                  className="object-cover w-full h-full"
+                                  onError={(e) => {
+                                    (e.target as HTMLImageElement).style.display = 'none';
+                                    (e.target as HTMLImageElement).parentElement!.innerHTML = '<div class="flex items-center justify-center h-full text-xs text-gray-400">No Image</div>';
+                                  }}
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </CardContent>
@@ -207,6 +231,26 @@ export default function DefectDetailPage() {
                         {defect.process}
                       </span>
                     </div>
+                    {defect.processImages && defect.processImages.length > 0 && (
+                      <div className="mt-2 mb-4">
+                        <span className="text-sm text-gray-500 mb-2 block">Process Images</span>
+                        <div className="grid grid-cols-1 gap-2">
+                          {defect.processImages.map((img, idx) => (
+                            <div key={idx} className="relative aspect-video bg-gray-100 rounded overflow-hidden border border-gray-200">
+                              <img
+                                src={img}
+                                alt={`Process ${idx + 1}`}
+                                className="object-cover w-full h-full"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).style.display = 'none';
+                                  (e.target as HTMLImageElement).parentElement!.innerHTML = '<div class="flex items-center justify-center h-full text-xs text-gray-400">No Image</div>';
+                                }}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-gray-500 flex items-center">
                         <Tag className="h-4 w-4 mr-2" />
@@ -298,11 +342,34 @@ export default function DefectDetailPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-6">
+                <div className="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-6 mb-6">
                   <p className="text-gray-700 whitespace-pre-line leading-relaxed text-base">
                     {defect.failureAnalysisRootCause}
                   </p>
                 </div>
+                {defect.failureAnalysisImages && defect.failureAnalysisImages.length > 0 && (
+                  <div>
+                    <h4 className="font-semibold text-gray-700 mb-4 flex items-center">
+                      <ImageIcon className="h-4 w-4 mr-2" />
+                      Reference Images
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {defect.failureAnalysisImages.map((img, idx) => (
+                        <div key={idx} className="relative aspect-video bg-gray-100 rounded overflow-hidden border border-gray-200">
+                          <img
+                            src={img}
+                            alt={`Failure Analysis ${idx + 1}`}
+                            className="object-cover w-full h-full"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).style.display = 'none';
+                              (e.target as HTMLImageElement).parentElement!.innerHTML = '<div class="flex items-center justify-center h-full text-xs text-gray-400">No Image</div>';
+                            }}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -320,11 +387,34 @@ export default function DefectDetailPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6">
+                <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6 mb-6">
                   <p className="text-gray-700 whitespace-pre-line leading-relaxed text-base">
                     {defect.correctiveAction}
                   </p>
                 </div>
+                {defect.correctiveActionImages && defect.correctiveActionImages.length > 0 && (
+                  <div>
+                    <h4 className="font-semibold text-gray-700 mb-4 flex items-center">
+                      <ImageIcon className="h-4 w-4 mr-2" />
+                      Reference Images
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {defect.correctiveActionImages.map((img, idx) => (
+                        <div key={idx} className="relative aspect-video bg-gray-100 rounded overflow-hidden border border-gray-200">
+                          <img
+                            src={img}
+                            alt={`Corrective Action ${idx + 1}`}
+                            className="object-cover w-full h-full"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).style.display = 'none';
+                              (e.target as HTMLImageElement).parentElement!.innerHTML = '<div class="flex items-center justify-center h-full text-xs text-gray-400">No Image</div>';
+                            }}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -335,44 +425,34 @@ export default function DefectDetailPage() {
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <ImageIcon className="h-5 w-5 mr-2 text-purple-600" />
-                  Reference Images
+                  All Images
                 </CardTitle>
                 <CardDescription>
-                  Visual documentation of the defect
+                  Visual documentation gallery
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {defect.images.length > 0 ? (
+                {allImages.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {defect.images.map((image) => (
+                    {allImages.map((imageUrl, idx) => (
                       <div
-                        key={image.id}
+                        key={idx}
                         className="border rounded-lg overflow-hidden"
                       >
-                        <div className="aspect-video bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
-                          {/* Placeholder for actual image */}
-                          <div className="text-center p-4">
-                            <ImageIcon className="h-12 w-12 text-gray-400 mx-auto mb-2" />
-                            <p className="text-sm text-gray-500">
-                              Image placeholder
-                            </p>
-                            <p className="text-xs text-gray-400 mt-1">
-                              {image.url}
-                            </p>
-                          </div>
+                        <div className="aspect-video bg-gray-100 dark:bg-gray-700 flex items-center justify-center relative">
+                          <img
+                            src={imageUrl}
+                            alt={`Defect Image ${idx + 1}`}
+                            className="object-cover w-full h-full"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).style.display = 'none';
+                              (e.target as HTMLImageElement).parentElement!.innerHTML = '<div class="flex flex-col items-center justify-center h-full p-4"><p class="text-sm text-gray-500">Image not found</p><p class="text-xs text-gray-400 mt-1 truncate max-w-full">' + imageUrl + '</p></div>';
+                            }}
+                          />
                         </div>
                         <div className="p-3 bg-gray-50 dark:bg-gray-800">
-                          <Badge variant="outline" className="mb-2">
-                            {image.imageType.replace("_", " ")}
-                          </Badge>
-                          {image.caption && (
-                            <p className="text-sm text-gray-600">
-                              {image.caption}
-                            </p>
-                          )}
-                          <p className="text-xs text-gray-400 mt-1">
-                            Uploaded by {image.uploadedBy} on{" "}
-                            {new Date(image.uploadedAt).toLocaleDateString()}
+                          <p className="text-xs text-gray-400 mt-1 truncate">
+                            {imageUrl}
                           </p>
                         </div>
                       </div>

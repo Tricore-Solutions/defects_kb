@@ -63,6 +63,9 @@ export default function EditDefectPage() {
         category: defect.category,
         failureAnalysisRootCause: defect.failureAnalysisRootCause,
         correctiveAction: defect.correctiveAction,
+        processImages: defect.processImages,
+        failureAnalysisImages: defect.failureAnalysisImages,
+        correctiveActionImages: defect.correctiveActionImages,
         isActive: defect.isActive,
       });
     }

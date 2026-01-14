@@ -11,6 +11,7 @@ export interface DefectKnowledge {
   // Core identification
   failureMode: string;        // e.g., "Exposed Wire"
   process: string;            // e.g., "AL-Pet Laser Marking and Manual AL-Pet removal"
+  processImages: string[];    // Array of image URLs for the process
   criteriaAcceptanceLimit: string;  // e.g., "AL-PH061"
   dri: string;                // DRI person responsible, e.g., "Yhel"
   
@@ -19,10 +20,11 @@ export interface DefectKnowledge {
   
   // Analysis
   failureAnalysisRootCause: string;  // Root cause description
-  correctiveAction: string;          // Corrective action to take
+  failureAnalysisImages: string[];   // Array of image URLs for failure analysis
   
-  // Visual Reference
-  images: DefectImage[];
+  // Corrective Action
+  correctiveAction: string;          // Corrective action to take
+  correctiveActionImages: string[];  // Array of image URLs for corrective action
   
   // Metadata
   createdAt: Date;
@@ -34,12 +36,8 @@ export interface DefectKnowledge {
 
 export interface DefectImage {
   id: string;
-  defectId: string;
   url: string;
   caption?: string;
-  imageType: "defect" | "root_cause" | "corrective_action" | "reference";
-  uploadedAt: Date;
-  uploadedBy: string;
 }
 
 // 4M Categories
@@ -73,11 +71,14 @@ export type ProcessType = (typeof PROCESSES)[number];
 export interface DefectFormData {
   failureMode: string;
   process: string;
+  processImages: string[];
   criteriaAcceptanceLimit: string;
   dri: string;
   category: DefectCategory;
   failureAnalysisRootCause: string;
+  failureAnalysisImages: string[];
   correctiveAction: string;
+  correctiveActionImages: string[];
   isActive: boolean;
 }
 

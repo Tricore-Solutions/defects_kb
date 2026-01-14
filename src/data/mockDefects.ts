@@ -1,4 +1,4 @@
-import { DefectKnowledge, DefectCategory, DefectImage } from "@/types/defect";
+import { DefectKnowledge, DefectCategory } from "@/types/defect";
 import defectsData from "./defects.json";
 
 /**
@@ -12,12 +12,14 @@ interface DefectJsonData {
   id: string;
   failureMode: string;
   process: string;
+  processImages: string[];
   criteriaAcceptanceLimit: string;
   dri: string;
   category: string;
   failureAnalysisRootCause: string;
+  failureAnalysisImages: string[];
   correctiveAction: string;
-  images: string[];
+  correctiveActionImages: string[];
   createdAt: string;
   updatedAt: string;
   createdBy: string;
@@ -34,7 +36,6 @@ function transformDefectData(data: DefectJsonData[]): DefectKnowledge[] {
   return data.map((item) => ({
     ...item,
     category: item.category as DefectCategory,
-    images: [] as DefectImage[], // Empty images array for now
     createdAt: new Date(item.createdAt),
     updatedAt: new Date(item.updatedAt),
   }));
