@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/button";
@@ -42,7 +42,7 @@ import {
 } from "@/data/mockDefects";
 import { DEFECT_CATEGORIES, DefectCategory } from "@/types/defect";
 
-export default function DefectsListPage() {
+function DefectsListContent() {
   console.log("DefectsListPage: Rendering defects list");
 
   const searchParams = useSearchParams();
@@ -326,5 +326,26 @@ export default function DefectsListPage() {
         </Card>
       </div>
     </DashboardLayout>
+  );
+}
+
+export default function DefectsListPage() {
+  return (
+    <Suspense fallback={
+      <DashboardLayout>
+        <div className="py-6">
+          <div className="mb-6">
+            <h1 className="text-2xl font-bold text-gray-900">
+              <span className="text-purple-500 px-2 py-1">
+                Defects List
+              </span>
+            </h1>
+            <p className="text-gray-600 mt-2">Loading defects...</p>
+          </div>
+        </div>
+      </DashboardLayout>
+    }>
+      <DefectsListContent />
+    </Suspense>
   );
 }
