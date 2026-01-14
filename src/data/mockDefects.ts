@@ -54,11 +54,27 @@ console.log("mockDefects loaded:", mockDefects.length, "defects");
 export function searchDefects(
   item?: string,
   category?: string,
-  defect?: string
+  defect?: string,
+  keyword?: string
 ): DefectKnowledge[] {
-  console.log("searchDefects called with:", { item, category, defect });
+  console.log("searchDefects called with:", { item, category, defect, keyword });
   
   let results = [...mockDefects];
+
+  // Filter by keyword (searches all text fields)
+  if (keyword) {
+    const lowerKeyword = keyword.toLowerCase();
+    results = results.filter(
+      (d) =>
+        d.failureMode.toLowerCase().includes(lowerKeyword) ||
+        d.process.toLowerCase().includes(lowerKeyword) ||
+        d.failureAnalysisRootCause.toLowerCase().includes(lowerKeyword) ||
+        d.correctiveAction.toLowerCase().includes(lowerKeyword) ||
+        d.criteriaAcceptanceLimit.toLowerCase().includes(lowerKeyword) ||
+        d.dri.toLowerCase().includes(lowerKeyword) ||
+        d.category.toLowerCase().includes(lowerKeyword)
+    );
+  }
 
   // Filter by item (failureMode)
   if (item) {

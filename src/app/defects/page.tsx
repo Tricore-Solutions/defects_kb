@@ -210,17 +210,20 @@ function DefectsListContent() {
     const item = searchParams.get("item");
     const category = searchParams.get("category");
     const defect = searchParams.get("defect");
+    const keyword = searchParams.get("keyword");
 
     console.log("DefectsListPage: Filtering defects with:", {
       item,
       category,
       defect,
+      keyword,
     });
 
     return searchDefects(
       item || undefined,
       category || undefined,
-      defect || undefined
+      defect || undefined,
+      keyword || undefined
     );
   }, [searchParams]);
 
@@ -251,7 +254,10 @@ function DefectsListContent() {
   const hasActiveFilters = 
     !!searchParams.get("item") || 
     !!searchParams.get("category") || 
-    !!searchParams.get("defect");
+    !!searchParams.get("defect") ||
+    !!searchParams.get("keyword");
+  
+  const activeKeyword = searchParams.get("keyword");
 
   const clearFilters = () => {
     router.push("/defects");
@@ -307,12 +313,17 @@ function DefectsListContent() {
 
         {/* Controls Bar */}
         <div className="mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-4 rounded-lg shadow-sm border">
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
             <p className="text-sm text-gray-600">
               Showing <span className="font-semibold text-purple-600">{paginatedDefects.length}</span> of{" "}
               <span className="font-semibold">{sortedDefects.length}</span> defects
               {hasActiveFilters && " (filtered)"}
             </p>
+            {activeKeyword && (
+              <Badge variant="secondary" className="bg-purple-100 text-purple-700">
+                Search: &quot;{activeKeyword}&quot;
+              </Badge>
+            )}
                   {hasActiveFilters && (
               <Button variant="ghost" onClick={clearFilters} size="sm" className="text-gray-500 hover:text-gray-900">
                 Clear filters

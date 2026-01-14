@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import {
   Search,
@@ -18,8 +18,46 @@ import { Button } from "@/components/ui/button";
 
 export default function Navigation() {
   const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchKeyword, setSearchKeyword] = useState("");
+  
   console.log("Navigation: Current pathname:", pathname);
+
+  // Sync search keyword with URL params when on defects page
+  useEffect(() => {
+    const keyword = searchParams.get("keyword");
+    if (keyword) {
+      setSearchKeyword(keyword);
+    } else if (pathname !== "/defects") {
+      // Clear search when navigating away from defects page
+      setSearchKeyword("");
+    }
+  }, [searchParams, pathname]);
+
+  const handleSearchBlur = () => {
+    console.log("Navigation: Search blur with keyword:", searchKeyword);
+    if (searchKeyword.trim()) {
+      router.push(`/defects?keyword=${encodeURIComponent(searchKeyword.trim())}`);
+    } else if (pathname === "/defects") {
+      // If search is cleared and we're on defects page, remove the keyword param
+      router.push("/defects");
+    }
+  };
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      console.log("Navigation: Search enter with keyword:", searchKeyword);
+      if (searchKeyword.trim()) {
+        router.push(`/defects?keyword=${encodeURIComponent(searchKeyword.trim())}`);
+      } else if (pathname === "/defects") {
+        router.push("/defects");
+      }
+      // Blur the input after pressing Enter
+      (e.target as HTMLInputElement).blur();
+    }
+  };
 
   const navItems = [
     {
@@ -91,8 +129,12 @@ export default function Navigation() {
               <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
               <Input
                 type="search"
-                placeholder="Search defects..."
+                placeholder="Search keyword"
                 className="pl-8 h-9"
+                value={searchKeyword}
+                onChange={(e) => setSearchKeyword(e.target.value)}
+                onBlur={handleSearchBlur}
+                onKeyDown={handleSearchKeyDown}
               />
             </div>
 
@@ -120,8 +162,12 @@ export default function Navigation() {
               <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
               <Input
                 type="search"
-                placeholder="Search defects..."
+                placeholder="Search keyword"
                 className="pl-8"
+                value={searchKeyword}
+                onChange={(e) => setSearchKeyword(e.target.value)}
+                onBlur={handleSearchBlur}
+                onKeyDown={handleSearchKeyDown}
               />
             </div>
 
