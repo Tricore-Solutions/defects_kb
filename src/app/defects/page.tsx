@@ -1,11 +1,11 @@
 "use client";
 
-import { useMemo, Suspense } from "react";
+import { useMemo, Suspense, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import {
   Table,
   TableBody,
@@ -32,6 +32,7 @@ function DefectsListContent() {
 
   const searchParams = useSearchParams();
   const router = useRouter();
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   
   // Filter defects based on search params directly
   const filteredDefects = useMemo(() => {
@@ -103,15 +104,12 @@ function DefectsListContent() {
             <TableHeader>
               <TableRow>
                 <TableHead className="w-32 bg-gray-50">Failure Mode</TableHead>
-                <TableHead className="w-48 bg-gray-50">Process</TableHead>
-                <TableHead className="w-48 bg-gray-50">Process Images</TableHead>
+                <TableHead className="w-64 bg-gray-50">Process</TableHead>
                 <TableHead className="w-32 bg-red-100 text-red-900">Criteria / Acceptance Limit</TableHead>
                 <TableHead className="w-24 bg-gray-50">DRI</TableHead>
                 <TableHead className="w-28 bg-gray-50">Category</TableHead>
-                <TableHead className="w-64 bg-gray-50">Failure Analysis / Root Cause</TableHead>
-                <TableHead className="w-48 bg-gray-50">FA / Root Cause Images</TableHead>
-                <TableHead className="w-64 bg-gray-50">Corrective Action</TableHead>
-                <TableHead className="w-48 bg-gray-50">Corrective Action Images</TableHead>
+                <TableHead className="w-80 bg-gray-50">Failure Analysis / Root Cause</TableHead>
+                <TableHead className="w-80 bg-gray-50">Corrective Action</TableHead>
                 <TableHead className="w-20 bg-gray-50 text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -119,7 +117,7 @@ function DefectsListContent() {
               {filteredDefects.length === 0 ? (
                 <TableRow>
                   <TableCell
-                    colSpan={11}
+                    colSpan={8}
                     className="h-32 text-center text-gray-500"
                   >
                     <div className="flex flex-col items-center">
@@ -146,36 +144,34 @@ function DefectsListContent() {
                     <TableCell className="font-medium text-purple-600">
                       {defect.failureMode}
                     </TableCell>
-                    <TableCell>{defect.process}</TableCell>
                     <TableCell>
-                      {defect.processImages && defect.processImages.length > 0 ? (
-                        <div className="grid grid-cols-1 gap-2">
-                          {defect.processImages.map((img, idx) => (
-                            <div key={idx} className="relative aspect-video bg-gray-100 rounded overflow-hidden border border-gray-200">
-                              {/* Using generic placeholder or simple img tag */}
-                              {/* In a real app, use next/image with proper config */}
-                              <img 
-                                src={img} 
-                                alt={`Process ${idx + 1}`} 
-                                className="object-cover w-full h-full"
-                                onError={(e) => {
-                                  // Fallback if image fails
-                                  (e.target as HTMLImageElement).style.display = 'none';
-                                  (e.target as HTMLImageElement).parentElement!.innerHTML = '<div class="flex items-center justify-center h-full text-xs text-gray-400">No Image</div>';
-                                }}
-                              />
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <span className="text-gray-400 text-xs">-</span>
-                      )}
+                      <div className="space-y-3">
+                        <div className="font-medium">{defect.process}</div>
+                        {defect.processImages && defect.processImages.length > 0 && (
+                          <div className="grid grid-cols-2 gap-2">
+                            {defect.processImages.map((img, idx) => (
+                              <div key={idx} className="relative aspect-video bg-gray-100 rounded overflow-hidden border border-gray-200 cursor-pointer hover:opacity-90 transition-opacity">
+                                <img 
+                                  src={img} 
+                                  alt={`Process ${idx + 1}`} 
+                                  className="object-cover w-full h-full"
+                                  onClick={() => setSelectedImage(img)}
+                                  onError={(e) => {
+                                    (e.target as HTMLImageElement).style.display = 'none';
+                                    (e.target as HTMLImageElement).parentElement!.innerHTML = '<div class="flex items-center justify-center h-full text-xs text-gray-400">No Image</div>';
+                                  }}
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     </TableCell>
-                    <TableCell className="font-mono text-sm bg-red-50 text-red-900">
+                    <TableCell className="font-mono text-sm bg-red-50 text-red-900 align-middle">
                       {defect.criteriaAcceptanceLimit}
                     </TableCell>
-                    <TableCell>{defect.dri}</TableCell>
-                    <TableCell>
+                    <TableCell className="align-middle">{defect.dri}</TableCell>
+                    <TableCell className="align-middle">
                       <Badge
                         variant={
                           defect.category === "MACHINE"
@@ -191,58 +187,56 @@ function DefectsListContent() {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <div className="text-sm whitespace-pre-line max-h-48 overflow-y-auto">
-                        {defect.failureAnalysisRootCause}
+                      <div className="space-y-3">
+                        <div className="text-sm whitespace-pre-line max-h-48 overflow-y-auto">
+                          {defect.failureAnalysisRootCause}
+                        </div>
+                        {defect.failureAnalysisImages && defect.failureAnalysisImages.length > 0 && (
+                          <div className="grid grid-cols-2 gap-2">
+                            {defect.failureAnalysisImages.map((img, idx) => (
+                              <div key={idx} className="relative aspect-video bg-gray-100 rounded overflow-hidden border border-gray-200 cursor-pointer hover:opacity-90 transition-opacity">
+                                <img 
+                                  src={img} 
+                                  alt={`FA ${idx + 1}`} 
+                                  className="object-cover w-full h-full"
+                                  onClick={() => setSelectedImage(img)}
+                                  onError={(e) => {
+                                    (e.target as HTMLImageElement).style.display = 'none';
+                                    (e.target as HTMLImageElement).parentElement!.innerHTML = '<div class="flex items-center justify-center h-full text-xs text-gray-400">No Image</div>';
+                                  }}
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </TableCell>
                     <TableCell>
-                      {defect.failureAnalysisImages && defect.failureAnalysisImages.length > 0 ? (
-                        <div className="grid grid-cols-1 gap-2">
-                          {defect.failureAnalysisImages.map((img, idx) => (
-                            <div key={idx} className="relative aspect-video bg-gray-100 rounded overflow-hidden border border-gray-200">
-                              <img 
-                                src={img} 
-                                alt={`FA ${idx + 1}`} 
-                                className="object-cover w-full h-full"
-                                onError={(e) => {
-                                  (e.target as HTMLImageElement).style.display = 'none';
-                                  (e.target as HTMLImageElement).parentElement!.innerHTML = '<div class="flex items-center justify-center h-full text-xs text-gray-400">No Image</div>';
-                                }}
-                              />
-                            </div>
-                          ))}
+                      <div className="space-y-3">
+                        <div className="text-sm whitespace-pre-line max-h-48 overflow-y-auto">
+                          {defect.correctiveAction}
                         </div>
-                      ) : (
-                        <span className="text-gray-400 text-xs">-</span>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm whitespace-pre-line max-h-48 overflow-y-auto">
-                        {defect.correctiveAction}
+                        {defect.correctiveActionImages && defect.correctiveActionImages.length > 0 && (
+                          <div className="grid grid-cols-2 gap-2">
+                            {defect.correctiveActionImages.map((img, idx) => (
+                              <div key={idx} className="relative aspect-video bg-gray-100 rounded overflow-hidden border border-gray-200 cursor-pointer hover:opacity-90 transition-opacity">
+                                <img 
+                                  src={img} 
+                                  alt={`CA ${idx + 1}`} 
+                                  className="object-cover w-full h-full"
+                                  onClick={() => setSelectedImage(img)}
+                                  onError={(e) => {
+                                    (e.target as HTMLImageElement).style.display = 'none';
+                                    (e.target as HTMLImageElement).parentElement!.innerHTML = '<div class="flex items-center justify-center h-full text-xs text-gray-400">No Image</div>';
+                                  }}
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </TableCell>
-                    <TableCell>
-                      {defect.correctiveActionImages && defect.correctiveActionImages.length > 0 ? (
-                        <div className="grid grid-cols-1 gap-2">
-                          {defect.correctiveActionImages.map((img, idx) => (
-                            <div key={idx} className="relative aspect-video bg-gray-100 rounded overflow-hidden border border-gray-200">
-                              <img 
-                                src={img} 
-                                alt={`CA ${idx + 1}`} 
-                                className="object-cover w-full h-full"
-                                onError={(e) => {
-                                  (e.target as HTMLImageElement).style.display = 'none';
-                                  (e.target as HTMLImageElement).parentElement!.innerHTML = '<div class="flex items-center justify-center h-full text-xs text-gray-400">No Image</div>';
-                                }}
-                              />
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <span className="text-gray-400 text-xs">-</span>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-right align-middle">
                       <div className="flex justify-end space-x-1">
                         <Link href={`/defects/${defect.id}`}>
                           <Button
@@ -273,33 +267,19 @@ function DefectsListContent() {
           </Table>
         </div>
 
-        {/* Legend */}
-        {/* <Card className="mt-6 bg-gray-50 dark:bg-gray-800/50">
-          <CardContent className="py-4">
-            <div className="flex flex-wrap items-center gap-4 text-sm">
-              <span className="font-medium text-gray-700">
-                Category Legend (4M):
-              </span>
-              {Object.entries(DEFECT_CATEGORIES).map(([key, value]) => (
-                <div key={key} className="flex items-center gap-1">
-                  <Badge
-                    variant={
-                      key === "MACHINE"
-                        ? "info"
-                        : key === "MAN"
-                        ? "warning"
-                        : key === "METHOD"
-                        ? "secondary"
-                        : "outline"
-                    }
-                  >
-                    {value}
-                  </Badge>
-                </div>
-              ))}
+        <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
+          <DialogContent className="max-w-4xl p-0 overflow-hidden bg-transparent border-none shadow-none">
+            <div className="relative w-full h-full flex items-center justify-center">
+              {selectedImage && (
+                <img
+                  src={selectedImage}
+                  alt="Full size view"
+                  className="max-w-full max-h-[90vh] object-contain rounded-lg"
+                />
+              )}
             </div>
-          </CardContent>
-        </Card> */}
+          </DialogContent>
+        </Dialog>
       </div>
     </DashboardLayout>
   );
