@@ -24,13 +24,13 @@ import {
   User,
   Tag,
   Wrench,
-  Shield,
   Target,
   Lightbulb,
   BookOpen,
+  Factory,
 } from "lucide-react";
 import { getDefectById } from "@/data/mockDefects";
-import { DEFECT_CATEGORIES, SEVERITY_LEVELS } from "@/types/defect";
+import { DEFECT_CATEGORIES } from "@/types/defect";
 
 export default function DefectDetailPage() {
   const params = useParams();
@@ -64,8 +64,6 @@ export default function DefectDetailPage() {
     );
   }
 
-  const severityInfo = SEVERITY_LEVELS[defect.severity];
-
   return (
     <DashboardLayout>
       <div className="py-6">
@@ -79,22 +77,24 @@ export default function DefectDetailPage() {
             </Link>
             <div>
               <div className="flex items-center gap-3">
-                <h1 className="text-2xl font-bold text-purple-700">
-                  {defect.code}
+                <h1 className="text-2xl font-bold">
+                  <span className=" text-purple-500 px-2 py-1">
+                    {defect.failureMode}
+                  </span>
                 </h1>
                 <Badge
                   variant={
-                    defect.severity === "CRITICAL"
-                      ? "critical"
-                      : defect.severity === "MAJOR"
-                      ? "warning"
-                      : defect.severity === "MINOR"
+                    defect.category === "MACHINE"
                       ? "info"
-                      : "secondary"
+                      : defect.category === "MAN"
+                      ? "warning"
+                      : defect.category === "METHOD"
+                      ? "secondary"
+                      : "outline"
                   }
                   className="text-sm"
                 >
-                  {severityInfo.label}
+                  {DEFECT_CATEGORIES[defect.category]}
                 </Badge>
                 <Badge
                   variant={defect.isActive ? "success" : "secondary"}
@@ -103,7 +103,7 @@ export default function DefectDetailPage() {
                   {defect.isActive ? "Active" : "Inactive"}
                 </Badge>
               </div>
-              <h2 className="text-xl text-gray-700 mt-1">{defect.name}</h2>
+              <h2 className="text-lg text-gray-600 mt-1">{defect.process}</h2>
             </div>
           </div>
           <div className="flex space-x-2">
@@ -124,11 +124,11 @@ export default function DefectDetailPage() {
               Overview
             </TabsTrigger>
             <TabsTrigger
-              value="investigation"
+              value="analysis"
               className="flex items-center gap-2"
             >
               <Target className="h-4 w-4" />
-              Investigation
+              Failure Analysis
             </TabsTrigger>
             <TabsTrigger value="actions" className="flex items-center gap-2">
               <Wrench className="h-4 w-4" />
@@ -145,20 +145,6 @@ export default function DefectDetailPage() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Main Info */}
               <div className="lg:col-span-2 space-y-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center">
-                      <BookOpen className="h-5 w-5 mr-2 text-purple-600" />
-                      Description
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-gray-700 leading-relaxed">
-                      {defect.description}
-                    </p>
-                  </CardContent>
-                </Card>
-
                 {/* Quick Reference Card - For Manufacturing */}
                 <Card className="border-l-4 border-l-green-500 bg-green-50 dark:bg-green-900/20">
                   <CardHeader>
@@ -174,23 +160,33 @@ export default function DefectDetailPage() {
                     <div className="space-y-4">
                       <div>
                         <h4 className="font-semibold text-green-800 mb-2">
-                          Immediate Actions:
+                          Corrective Action:
                         </h4>
                         <div className="bg-white dark:bg-gray-800 rounded-lg p-4 whitespace-pre-line text-sm">
                           {defect.correctiveAction}
                         </div>
                       </div>
-                      {defect.preventiveAction && (
-                        <div>
-                          <h4 className="font-semibold text-green-800 mb-2">
-                            Prevention:
-                          </h4>
-                          <div className="bg-white dark:bg-gray-800 rounded-lg p-4 text-sm">
-                            {defect.preventiveAction}
-                          </div>
-                        </div>
-                      )}
                     </div>
+                  </CardContent>
+                </Card>
+
+                {/* Root Cause Summary */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <AlertTriangle className="h-5 w-5 mr-2 text-orange-600" />
+                      Root Cause Summary
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+                      {defect.failureAnalysisRootCause.substring(0, 300)}...
+                    </p>
+                    <Button variant="link" className="mt-2 p-0">
+                      <Link href="#" onClick={() => document.querySelector('[value="analysis"]')?.dispatchEvent(new Event('click'))}>
+                        Read full analysis →
+                      </Link>
+                    </Button>
                   </CardContent>
                 </Card>
               </div>
@@ -204,31 +200,49 @@ export default function DefectDetailPage() {
                   <CardContent className="space-y-4">
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-gray-500 flex items-center">
-                        <Tag className="h-4 w-4 mr-2" />
-                        Category
+                        <Factory className="h-4 w-4 mr-2" />
+                        Process
                       </span>
-                      <span className="font-medium">
-                        {DEFECT_CATEGORIES[defect.category]}
+                      <span className="font-medium text-right text-sm max-w-[180px]">
+                        {defect.process}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-gray-500 flex items-center">
-                        <AlertTriangle className="h-4 w-4 mr-2" />
-                        Severity
+                        <Tag className="h-4 w-4 mr-2" />
+                        Category (4M)
                       </span>
                       <Badge
                         variant={
-                          defect.severity === "CRITICAL"
-                            ? "critical"
-                            : defect.severity === "MAJOR"
-                            ? "warning"
-                            : defect.severity === "MINOR"
+                          defect.category === "MACHINE"
                             ? "info"
-                            : "secondary"
+                            : defect.category === "MAN"
+                            ? "warning"
+                            : defect.category === "METHOD"
+                            ? "secondary"
+                            : "outline"
                         }
                       >
-                        {severityInfo.label}
+                        {DEFECT_CATEGORIES[defect.category]}
                       </Badge>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-500 flex items-center">
+                        <FileText className="h-4 w-4 mr-2" />
+                        Criteria
+                      </span>
+                      <span className="font-mono text-sm">
+                        {defect.criteriaAcceptanceLimit}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-500 flex items-center">
+                        <User className="h-4 w-4 mr-2" />
+                        DRI
+                      </span>
+                      <span className="font-medium">
+                        {defect.dri}
+                      </span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-gray-500 flex items-center">
@@ -239,73 +253,6 @@ export default function DefectDetailPage() {
                         {defect.isActive ? "Active" : "Inactive"}
                       </Badge>
                     </div>
-                    {defect.occurrenceCount !== undefined && (
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-500">
-                          Occurrences
-                        </span>
-                        <span className="font-medium">
-                          {defect.occurrenceCount}
-                        </span>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg">Applicable To</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    {defect.applicableProducts &&
-                      defect.applicableProducts.length > 0 && (
-                        <div>
-                          <span className="text-sm text-gray-500 block mb-2">
-                            Products
-                          </span>
-                          <div className="flex flex-wrap gap-1">
-                            {defect.applicableProducts.map((product) => (
-                              <Badge key={product} variant="outline">
-                                {product}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    {defect.applicableProcesses &&
-                      defect.applicableProcesses.length > 0 && (
-                        <div>
-                          <span className="text-sm text-gray-500 block mb-2">
-                            Processes
-                          </span>
-                          <div className="flex flex-wrap gap-1">
-                            {defect.applicableProcesses.map((process) => (
-                              <Badge key={process} variant="outline">
-                                {process}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    {defect.relatedDefectCodes &&
-                      defect.relatedDefectCodes.length > 0 && (
-                        <div>
-                          <span className="text-sm text-gray-500 block mb-2">
-                            Related Codes (P-Chart)
-                          </span>
-                          <div className="flex flex-wrap gap-1">
-                            {defect.relatedDefectCodes.map((code) => (
-                              <Badge
-                                key={code}
-                                variant="secondary"
-                                className="font-mono"
-                              >
-                                {code}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-                      )}
                   </CardContent>
                 </Card>
 
@@ -338,96 +285,48 @@ export default function DefectDetailPage() {
             </div>
           </TabsContent>
 
-          {/* Investigation Tab */}
-          <TabsContent value="investigation">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center text-orange-700">
-                    <Target className="h-5 w-5 mr-2" />
-                    Failure Analysis
-                  </CardTitle>
-                  <CardDescription>
-                    Detailed analysis of the failure mode
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-4">
-                    <p className="text-gray-700 whitespace-pre-line leading-relaxed">
-                      {defect.failureAnalysis}
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center text-red-700">
-                    <AlertTriangle className="h-5 w-5 mr-2" />
-                    Root Cause
-                  </CardTitle>
-                  <CardDescription>
-                    Identified root causes of the defect
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="bg-red-50 dark:bg-red-900/20 rounded-lg p-4">
-                    <p className="text-gray-700 whitespace-pre-line leading-relaxed">
-                      {defect.rootCause}
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+          {/* Failure Analysis Tab */}
+          <TabsContent value="analysis">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center text-orange-700">
+                  <Target className="h-5 w-5 mr-2" />
+                  Failure Analysis / Root Cause
+                </CardTitle>
+                <CardDescription>
+                  Detailed analysis of the failure mode and its root causes
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-6">
+                  <p className="text-gray-700 whitespace-pre-line leading-relaxed text-base">
+                    {defect.failureAnalysisRootCause}
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
 
           {/* Corrective Actions Tab */}
           <TabsContent value="actions">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card className="border-l-4 border-l-blue-500">
-                <CardHeader>
-                  <CardTitle className="flex items-center text-blue-700">
-                    <Wrench className="h-5 w-5 mr-2" />
-                    Corrective Action
-                  </CardTitle>
-                  <CardDescription>
-                    Steps to correct the defect when found
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
-                    <p className="text-gray-700 whitespace-pre-line leading-relaxed">
-                      {defect.correctiveAction}
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border-l-4 border-l-green-500">
-                <CardHeader>
-                  <CardTitle className="flex items-center text-green-700">
-                    <Shield className="h-5 w-5 mr-2" />
-                    Preventive Action
-                  </CardTitle>
-                  <CardDescription>
-                    Steps to prevent future occurrences
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {defect.preventiveAction ? (
-                    <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4">
-                      <p className="text-gray-700 whitespace-pre-line leading-relaxed">
-                        {defect.preventiveAction}
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="text-gray-500 italic text-center py-8">
-                      No preventive action documented yet.
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </div>
+            <Card className="border-l-4 border-l-blue-500">
+              <CardHeader>
+                <CardTitle className="flex items-center text-blue-700">
+                  <Wrench className="h-5 w-5 mr-2" />
+                  Corrective Action
+                </CardTitle>
+                <CardDescription>
+                  Steps to correct the defect when found
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6">
+                  <p className="text-gray-700 whitespace-pre-line leading-relaxed text-base">
+                    {defect.correctiveAction}
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
 
           {/* Images Tab */}

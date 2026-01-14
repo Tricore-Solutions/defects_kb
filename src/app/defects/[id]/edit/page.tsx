@@ -30,15 +30,13 @@ import {
   Target,
   Wrench,
   Image as ImageIcon,
-  Plus,
-  X,
   Trash2,
 } from "lucide-react";
 import { getDefectById } from "@/data/mockDefects";
 import {
   DEFECT_CATEGORIES,
-  SEVERITY_LEVELS,
   DefectFormData,
+  PROCESSES,
 } from "@/types/defect";
 
 export default function EditDefectPage() {
@@ -49,9 +47,6 @@ export default function EditDefectPage() {
   console.log("EditDefectPage: Loading defect with ID:", defectId);
 
   const [formData, setFormData] = useState<DefectFormData | null>(null);
-  const [newProduct, setNewProduct] = useState("");
-  const [newProcess, setNewProcess] = useState("");
-  const [newRelatedCode, setNewRelatedCode] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -61,18 +56,13 @@ export default function EditDefectPage() {
     if (defect) {
       console.log("EditDefectPage: Loaded defect data:", defect);
       setFormData({
-        code: defect.code,
-        name: defect.name,
+        failureMode: defect.failureMode,
+        process: defect.process,
+        criteriaAcceptanceLimit: defect.criteriaAcceptanceLimit,
+        dri: defect.dri,
         category: defect.category,
-        severity: defect.severity,
-        description: defect.description,
-        failureAnalysis: defect.failureAnalysis,
-        rootCause: defect.rootCause,
+        failureAnalysisRootCause: defect.failureAnalysisRootCause,
         correctiveAction: defect.correctiveAction,
-        preventiveAction: defect.preventiveAction || "",
-        applicableProducts: defect.applicableProducts || [],
-        applicableProcesses: defect.applicableProcesses || [],
-        relatedDefectCodes: defect.relatedDefectCodes || [],
         isActive: defect.isActive,
       });
     }
@@ -129,59 +119,19 @@ export default function EditDefectPage() {
     setFormData((prev) => (prev ? { ...prev, [name]: value } : null));
   };
 
-  const addToList = (
-    listName: "applicableProducts" | "applicableProcesses" | "relatedDefectCodes",
-    value: string,
-    setter: (value: string) => void
-  ) => {
-    if (value.trim() && formData) {
-      console.log(`EditDefectPage: Adding ${value} to ${listName}`);
-      setFormData((prev) =>
-        prev
-          ? {
-              ...prev,
-              [listName]: [...(prev[listName] || []), value.trim()],
-            }
-          : null
-      );
-      setter("");
-    }
-  };
-
-  const removeFromList = (
-    listName: "applicableProducts" | "applicableProcesses" | "relatedDefectCodes",
-    index: number
-  ) => {
-    console.log(`EditDefectPage: Removing item at index ${index} from ${listName}`);
-    setFormData((prev) =>
-      prev
-        ? {
-            ...prev,
-            [listName]: (prev[listName] || []).filter((_, i) => i !== index),
-          }
-        : null
-    );
-  };
-
   const validateForm = (): boolean => {
     if (!formData) return false;
 
     const newErrors: Record<string, string> = {};
 
-    if (!formData.code.trim()) {
-      newErrors.code = "Defect code is required";
+    if (!formData.failureMode.trim()) {
+      newErrors.failureMode = "Failure mode is required";
     }
-    if (!formData.name.trim()) {
-      newErrors.name = "Defect name is required";
+    if (!formData.process.trim()) {
+      newErrors.process = "Process is required";
     }
-    if (!formData.description.trim()) {
-      newErrors.description = "Description is required";
-    }
-    if (!formData.failureAnalysis.trim()) {
-      newErrors.failureAnalysis = "Failure analysis is required";
-    }
-    if (!formData.rootCause.trim()) {
-      newErrors.rootCause = "Root cause is required";
+    if (!formData.failureAnalysisRootCause.trim()) {
+      newErrors.failureAnalysisRootCause = "Failure analysis / root cause is required";
     }
     if (!formData.correctiveAction.trim()) {
       newErrors.correctiveAction = "Corrective action is required";
@@ -237,10 +187,14 @@ export default function EditDefectPage() {
               </Button>
             </Link>
             <div>
-              <h1 className="text-2xl font-bold text-purple-700">
-                Edit Defect: {formData.code}
+              <h1 className="text-2xl font-bold">
+                <span className=" text-purple-500 px-2 py-1">
+                  Edit Defect
+                </span>
               </h1>
-              <p className="text-gray-600">Update the defect information</p>
+              <p className="text-gray-600 mt-1">
+                {formData.failureMode} - {formData.process}
+              </p>
             </div>
           </div>
           <Button
@@ -265,39 +219,47 @@ export default function EditDefectPage() {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="code">
-                    Defect Code <span className="text-red-500">*</span>
+                  <Label htmlFor="failureMode">
+                    Failure Mode <span className="text-red-500">*</span>
                   </Label>
                   <Input
-                    id="code"
-                    name="code"
-                    value={formData.code}
+                    id="failureMode"
+                    name="failureMode"
+                    value={formData.failureMode}
                     onChange={handleInputChange}
-                    className={errors.code ? "border-red-500" : ""}
+                    className={errors.failureMode ? "border-red-500" : ""}
                   />
-                  {errors.code && (
-                    <p className="text-sm text-red-500">{errors.code}</p>
+                  {errors.failureMode && (
+                    <p className="text-sm text-red-500">{errors.failureMode}</p>
                   )}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="name">
-                    Defect Name <span className="text-red-500">*</span>
+                  <Label htmlFor="process">
+                    Process <span className="text-red-500">*</span>
                   </Label>
-                  <Input
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    className={errors.name ? "border-red-500" : ""}
-                  />
-                  {errors.name && (
-                    <p className="text-sm text-red-500">{errors.name}</p>
+                  <Select
+                    value={formData.process}
+                    onValueChange={(value) => handleSelectChange("process", value)}
+                  >
+                    <SelectTrigger className={errors.process ? "border-red-500" : ""}>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {PROCESSES.map((process) => (
+                        <SelectItem key={process} value={process}>
+                          {process}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {errors.process && (
+                    <p className="text-sm text-red-500">{errors.process}</p>
                   )}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="category">Category</Label>
+                  <Label htmlFor="category">Category (4M)</Label>
                   <Select
                     value={formData.category}
                     onValueChange={(value) =>
@@ -318,24 +280,25 @@ export default function EditDefectPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="severity">Severity</Label>
-                  <Select
-                    value={formData.severity}
-                    onValueChange={(value) =>
-                      handleSelectChange("severity", value)
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Object.entries(SEVERITY_LEVELS).map(([key, value]) => (
-                        <SelectItem key={key} value={key}>
-                          {value.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Label htmlFor="criteriaAcceptanceLimit">
+                    Criteria / Acceptance Limit
+                  </Label>
+                  <Input
+                    id="criteriaAcceptanceLimit"
+                    name="criteriaAcceptanceLimit"
+                    value={formData.criteriaAcceptanceLimit}
+                    onChange={handleInputChange}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="dri">DRI</Label>
+                  <Input
+                    id="dri"
+                    name="dri"
+                    value={formData.dri}
+                    onChange={handleInputChange}
+                  />
                 </div>
 
                 <div className="space-y-2">
@@ -358,77 +321,43 @@ export default function EditDefectPage() {
                   </Select>
                 </div>
               </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="description">
-                  Description <span className="text-red-500">*</span>
-                </Label>
-                <Textarea
-                  id="description"
-                  name="description"
-                  rows={3}
-                  value={formData.description}
-                  onChange={handleInputChange}
-                  className={errors.description ? "border-red-500" : ""}
-                />
-                {errors.description && (
-                  <p className="text-sm text-red-500">{errors.description}</p>
-                )}
-              </div>
             </CardContent>
           </Card>
 
-          {/* Investigation Results */}
+          {/* Failure Analysis / Root Cause */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
                 <Target className="h-5 w-5 mr-2 text-orange-600" />
-                Investigation Results
+                Failure Analysis / Root Cause
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="failureAnalysis">
-                  Failure Analysis <span className="text-red-500">*</span>
+                <Label htmlFor="failureAnalysisRootCause">
+                  Failure Analysis / Root Cause <span className="text-red-500">*</span>
                 </Label>
                 <Textarea
-                  id="failureAnalysis"
-                  name="failureAnalysis"
-                  rows={4}
-                  value={formData.failureAnalysis}
+                  id="failureAnalysisRootCause"
+                  name="failureAnalysisRootCause"
+                  rows={6}
+                  value={formData.failureAnalysisRootCause}
                   onChange={handleInputChange}
-                  className={errors.failureAnalysis ? "border-red-500" : ""}
+                  className={errors.failureAnalysisRootCause ? "border-red-500" : ""}
                 />
-                {errors.failureAnalysis && (
-                  <p className="text-sm text-red-500">{errors.failureAnalysis}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="rootCause">
-                  Root Cause <span className="text-red-500">*</span>
-                </Label>
-                <Textarea
-                  id="rootCause"
-                  name="rootCause"
-                  rows={4}
-                  value={formData.rootCause}
-                  onChange={handleInputChange}
-                  className={errors.rootCause ? "border-red-500" : ""}
-                />
-                {errors.rootCause && (
-                  <p className="text-sm text-red-500">{errors.rootCause}</p>
+                {errors.failureAnalysisRootCause && (
+                  <p className="text-sm text-red-500">{errors.failureAnalysisRootCause}</p>
                 )}
               </div>
             </CardContent>
           </Card>
 
-          {/* Corrective & Preventive Actions */}
+          {/* Corrective Action */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
                 <Wrench className="h-5 w-5 mr-2 text-blue-600" />
-                Corrective & Preventive Actions
+                Corrective Action
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -439,7 +368,7 @@ export default function EditDefectPage() {
                 <Textarea
                   id="correctiveAction"
                   name="correctiveAction"
-                  rows={4}
+                  rows={6}
                   value={formData.correctiveAction}
                   onChange={handleInputChange}
                   className={errors.correctiveAction ? "border-red-500" : ""}
@@ -447,183 +376,6 @@ export default function EditDefectPage() {
                 {errors.correctiveAction && (
                   <p className="text-sm text-red-500">{errors.correctiveAction}</p>
                 )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="preventiveAction">Preventive Action</Label>
-                <Textarea
-                  id="preventiveAction"
-                  name="preventiveAction"
-                  rows={4}
-                  value={formData.preventiveAction}
-                  onChange={handleInputChange}
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Metadata */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <AlertTriangle className="h-5 w-5 mr-2 text-gray-600" />
-                Additional Information
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Applicable Products */}
-              <div className="space-y-2">
-                <Label>Applicable Products</Label>
-                <div className="flex gap-2">
-                  <Input
-                    placeholder="Add product..."
-                    value={newProduct}
-                    onChange={(e) => setNewProduct(e.target.value)}
-                    onKeyPress={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        addToList("applicableProducts", newProduct, setNewProduct);
-                      }
-                    }}
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() =>
-                      addToList("applicableProducts", newProduct, setNewProduct)
-                    }
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </div>
-                {formData.applicableProducts &&
-                  formData.applicableProducts.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {formData.applicableProducts.map((product, index) => (
-                        <span
-                          key={index}
-                          className="inline-flex items-center gap-1 px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-sm"
-                        >
-                          {product}
-                          <button
-                            type="button"
-                            onClick={() =>
-                              removeFromList("applicableProducts", index)
-                            }
-                            className="hover:text-purple-900"
-                          >
-                            <X className="h-3 w-3" />
-                          </button>
-                        </span>
-                      ))}
-                    </div>
-                  )}
-              </div>
-
-              {/* Applicable Processes */}
-              <div className="space-y-2">
-                <Label>Applicable Processes</Label>
-                <div className="flex gap-2">
-                  <Input
-                    placeholder="Add process..."
-                    value={newProcess}
-                    onChange={(e) => setNewProcess(e.target.value)}
-                    onKeyPress={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        addToList("applicableProcesses", newProcess, setNewProcess);
-                      }
-                    }}
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() =>
-                      addToList("applicableProcesses", newProcess, setNewProcess)
-                    }
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </div>
-                {formData.applicableProcesses &&
-                  formData.applicableProcesses.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {formData.applicableProcesses.map((process, index) => (
-                        <span
-                          key={index}
-                          className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-sm"
-                        >
-                          {process}
-                          <button
-                            type="button"
-                            onClick={() =>
-                              removeFromList("applicableProcesses", index)
-                            }
-                            className="hover:text-blue-900"
-                          >
-                            <X className="h-3 w-3" />
-                          </button>
-                        </span>
-                      ))}
-                    </div>
-                  )}
-              </div>
-
-              {/* Related Defect Codes */}
-              <div className="space-y-2">
-                <Label>Related P-Chart Defect Codes</Label>
-                <div className="flex gap-2">
-                  <Input
-                    placeholder="Add related code..."
-                    value={newRelatedCode}
-                    onChange={(e) => setNewRelatedCode(e.target.value)}
-                    onKeyPress={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        addToList(
-                          "relatedDefectCodes",
-                          newRelatedCode,
-                          setNewRelatedCode
-                        );
-                      }
-                    }}
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() =>
-                      addToList(
-                        "relatedDefectCodes",
-                        newRelatedCode,
-                        setNewRelatedCode
-                      )
-                    }
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </div>
-                {formData.relatedDefectCodes &&
-                  formData.relatedDefectCodes.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {formData.relatedDefectCodes.map((code, index) => (
-                        <span
-                          key={index}
-                          className="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-sm font-mono"
-                        >
-                          {code}
-                          <button
-                            type="button"
-                            onClick={() =>
-                              removeFromList("relatedDefectCodes", index)
-                            }
-                            className="hover:text-gray-900"
-                          >
-                            <X className="h-3 w-3" />
-                          </button>
-                        </span>
-                      ))}
-                    </div>
-                  )}
               </div>
             </CardContent>
           </Card>

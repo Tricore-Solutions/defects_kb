@@ -1,34 +1,28 @@
-import { DefectKnowledge, DefectCategory, SeverityLevel, DefectImage } from "@/types/defect";
+import { DefectKnowledge, DefectCategory, DefectImage } from "@/types/defect";
 import defectsData from "./defects.json";
 
 /**
  * Mock data for Defects Management System
- * Based on actual defects from P-Chart master_defects table
+ * Based on MX** DEFECT SUMMARY AND FACA format
  * Data is loaded from defects.json for easier maintenance
  */
 
 // Type for the raw JSON data
 interface DefectJsonData {
   id: string;
-  code: string;
-  name: string;
+  failureMode: string;
+  process: string;
+  criteriaAcceptanceLimit: string;
+  dri: string;
   category: string;
-  severity: string;
-  description: string;
-  failureAnalysis: string;
-  rootCause: string;
+  failureAnalysisRootCause: string;
   correctiveAction: string;
-  preventiveAction: string;
   images: string[];
-  applicableProducts: string[];
-  applicableProcesses: string[];
-  relatedDefectCodes: string[];
   createdAt: string;
   updatedAt: string;
   createdBy: string;
-  updatedBy: string;
+  updatedBy?: string;
   isActive: boolean;
-  occurrenceCount: number;
 }
 
 /**
@@ -40,7 +34,6 @@ function transformDefectData(data: DefectJsonData[]): DefectKnowledge[] {
   return data.map((item) => ({
     ...item,
     category: item.category as DefectCategory,
-    severity: item.severity as SeverityLevel,
     images: [] as DefectImage[], // Empty images array for now
     createdAt: new Date(item.createdAt),
     updatedAt: new Date(item.updatedAt),
@@ -58,37 +51,42 @@ console.log("mockDefects loaded:", mockDefects.length, "defects");
  * Helper function to search defects
  */
 export function searchDefects(
-  query?: string,
-  category?: DefectCategory,
-  severity?: SeverityLevel,
-  isActive?: boolean
+  item?: string,
+  category?: string,
+  defect?: string
 ): DefectKnowledge[] {
-  console.log("searchDefects called with:", { query, category, severity, isActive });
+  console.log("searchDefects called with:", { item, category, defect });
   
   let results = [...mockDefects];
 
-  if (query) {
-    const lowerQuery = query.toLowerCase();
+  // Filter by item (failureMode)
+  if (item) {
+    const lowerItem = item.toLowerCase();
     results = results.filter(
-      (defect) =>
-        defect.name.toLowerCase().includes(lowerQuery) ||
-        defect.code.toLowerCase().includes(lowerQuery) ||
-        defect.description.toLowerCase().includes(lowerQuery) ||
-        defect.rootCause.toLowerCase().includes(lowerQuery) ||
-        defect.correctiveAction.toLowerCase().includes(lowerQuery)
+      (d) => d.failureMode.toLowerCase().includes(lowerItem)
     );
   }
 
+  // Filter by category (4M category or process)
   if (category) {
-    results = results.filter((defect) => defect.category === category);
+    const lowerCategory = category.toLowerCase();
+    results = results.filter(
+      (d) =>
+        d.category.toLowerCase().includes(lowerCategory) ||
+        d.process.toLowerCase().includes(lowerCategory)
+    );
   }
 
-  if (severity) {
-    results = results.filter((defect) => defect.severity === severity);
-  }
-
-  if (isActive !== undefined) {
-    results = results.filter((defect) => defect.isActive === isActive);
+  // Filter by defect (general search across all fields)
+  if (defect) {
+    const lowerDefect = defect.toLowerCase();
+    results = results.filter(
+      (d) =>
+        d.failureMode.toLowerCase().includes(lowerDefect) ||
+        d.process.toLowerCase().includes(lowerDefect) ||
+        d.failureAnalysisRootCause.toLowerCase().includes(lowerDefect) ||
+        d.correctiveAction.toLowerCase().includes(lowerDefect)
+    );
   }
 
   console.log("searchDefects returning", results.length, "results");
@@ -112,9 +110,17 @@ export function getCategories(): DefectCategory[] {
 }
 
 /**
- * Get unique severity levels from defects
+ * Get unique failure modes from defects
  */
-export function getSeverityLevels(): SeverityLevel[] {
-  const severities = new Set(mockDefects.map((d) => d.severity));
-  return Array.from(severities);
+export function getFailureModes(): string[] {
+  const failureModes = new Set(mockDefects.map((d) => d.failureMode));
+  return Array.from(failureModes);
+}
+
+/**
+ * Get unique processes from defects
+ */
+export function getProcesses(): string[] {
+  const processes = new Set(mockDefects.map((d) => d.process));
+  return Array.from(processes);
 }

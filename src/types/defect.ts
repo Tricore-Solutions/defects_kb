@@ -2,46 +2,34 @@
  * Defects Management Types
  *
  * This module defines the data structures for the Defects Management system.
- * The system allows manufacturing teams to:
- * 1. Search and identify types of defects
- * 2. View investigation results
- * 3. Reference corrective actions for manufacturing
+ * Based on MX** DEFECT SUMMARY AND FACA format.
  */
 
 export interface DefectKnowledge {
   id: string;
-  code: string; // Unique defect code (e.g., "DK-001")
-  name: string; // Defect name/title (Failure Mode)
-  category: DefectCategory;
-  severity: SeverityLevel;
-  description: string;
-
-  // Investigation Results
-  failureAnalysis: string; // Root cause analysis
-  rootCause: string;
-
-  // Manufacturing Reference
-  correctiveAction: string;
-  preventiveAction?: string;
-
+  
+  // Core identification
+  failureMode: string;        // e.g., "Exposed Wire"
+  process: string;            // e.g., "AL-Pet Laser Marking and Manual AL-Pet removal"
+  criteriaAcceptanceLimit: string;  // e.g., "AL-PH061"
+  dri: string;                // DRI person responsible, e.g., "Yhel"
+  
+  // Category (4M analysis)
+  category: DefectCategory;   // Machine, Man, Method, Material
+  
+  // Analysis
+  failureAnalysisRootCause: string;  // Root cause description
+  correctiveAction: string;          // Corrective action to take
+  
   // Visual Reference
   images: DefectImage[];
-
+  
   // Metadata
-  applicableProducts?: string[];
-  applicableProcesses?: string[];
-  relatedDefectCodes?: string[]; // Links to P-Chart defect codes
-
-  // Audit
   createdAt: Date;
   updatedAt: Date;
   createdBy: string;
   updatedBy?: string;
   isActive: boolean;
-
-  // Statistics
-  occurrenceCount?: number;
-  lastOccurrence?: Date;
 }
 
 export interface DefectImage {
@@ -54,82 +42,51 @@ export interface DefectImage {
   uploadedBy: string;
 }
 
-export type DefectCategory =
-  | "SOLDERING"
-  | "VISUAL_INSPECTION"
-  | "CABLE_PREPARATION"
-  | "CRIMPING"
-  | "ASSEMBLY"
-  | "TAPING"
-  | "ELECTRICAL"
-  | "LABELING"
-  | "OTHER";
+// 4M Categories
+export type DefectCategory = "MACHINE" | "MAN" | "METHOD" | "MATERIAL";
 
 export const DEFECT_CATEGORIES: Record<DefectCategory, string> = {
-  SOLDERING: "Soldering",
-  VISUAL_INSPECTION: "Visual Inspection",
-  CABLE_PREPARATION: "Cable Preparation",
-  CRIMPING: "Crimping & Terminal",
-  ASSEMBLY: "Assembly",
-  TAPING: "Taping & Packaging",
-  ELECTRICAL: "Electrical Test",
-  LABELING: "Labeling",
+  MACHINE: "Machine",
+  MAN: "Man",
+  METHOD: "Method",
+  MATERIAL: "Material",
+};
+
+// Failure Modes
+export type FailureMode = "EXPOSED_WIRE" | "OTHER";
+
+export const FAILURE_MODES: Record<FailureMode, string> = {
+  EXPOSED_WIRE: "Exposed Wire",
   OTHER: "Other",
 };
 
-export type SeverityLevel = "CRITICAL" | "MAJOR" | "MINOR" | "COSMETIC";
+// Processes
+export const PROCESSES = [
+  "AL-Pet Laser Marking and Manual AL-Pet removal",
+  "Lowside Endstrip Process",
+  "Ground Shell Assembly",
+  "Soldering Process",
+] as const;
 
-export const SEVERITY_LEVELS: Record<
-  SeverityLevel,
-  { label: string; color: string; bgColor: string }
-> = {
-  CRITICAL: {
-    label: "Critical",
-    color: "text-red-700",
-    bgColor: "bg-red-100",
-  },
-  MAJOR: {
-    label: "Major",
-    color: "text-orange-700",
-    bgColor: "bg-orange-100",
-  },
-  MINOR: {
-    label: "Minor",
-    color: "text-yellow-700",
-    bgColor: "bg-yellow-100",
-  },
-  COSMETIC: {
-    label: "Cosmetic",
-    color: "text-blue-700",
-    bgColor: "bg-blue-100",
-  },
-};
+export type ProcessType = (typeof PROCESSES)[number];
 
 export interface DefectFormData {
-  code: string;
-  name: string;
+  failureMode: string;
+  process: string;
+  criteriaAcceptanceLimit: string;
+  dri: string;
   category: DefectCategory;
-  severity: SeverityLevel;
-  description: string;
-  failureAnalysis: string;
-  rootCause: string;
+  failureAnalysisRootCause: string;
   correctiveAction: string;
-  preventiveAction?: string;
-  applicableProducts?: string[];
-  applicableProcesses?: string[];
-  relatedDefectCodes?: string[];
   isActive: boolean;
 }
 
 export interface DefectSearchFilters {
-  search?: string;
-  category?: DefectCategory;
-  severity?: SeverityLevel;
-  isActive?: boolean;
+  item?: string;      // Maps to failureMode
+  category?: string;  // Maps to category or process
+  defect?: string;    // General search term
   page: number;
   limit: number;
-  sortField?: string;
-  sortDirection?: "asc" | "desc";
 }
 
 export interface PaginatedDefects {
